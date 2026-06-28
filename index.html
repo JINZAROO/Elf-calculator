@@ -500,7 +500,7 @@
     <button class="sub-tab" onclick="setSubTab('general')">📦 General</button>
   </div>
   <div class="controls">
-    <input class="search" type="text" id="search" placeholder="아이템 검색..." oninput="renderCards()" />
+    <input class="search" type="text" id="search" placeholder="Item Search..." oninput="renderCards()" />
     <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
     <span class="last-update" id="last-update"></span>
   </div>
@@ -662,19 +662,22 @@ async function loadAll() {
 
   const allItems = [...ITEMS.resources, ...ITEMS.costume, ...ITEMS.general];
   let done = 0;
-  setStatus('loading', `가격 조회 중... (0/${allItems.length})`);
+  setStatus('loading', `Checking prices... (0/${allItems.length})`);
 
   for (const item of allItems) {
     try { prices[item.id] = await fetchPrice(item.id); }
     catch(e) { prices[item.id] = null; }
     done++;
-    setStatus('loading', `가격 조회 중... (${done}/${allItems.length})`);
+    setStatus('loading', `Checking prices... (${done}/${allItems.length})`);
     renderCards();
     await new Promise(r => setTimeout(r, 150));
   }
 
-  setStatus('ok', '업데이트 완료');
-  document.getElementById('last-update').textContent = '마지막 업데이트: ' + new Date().toLocaleTimeString('ko-KR');
+  setStatus('ok', 'Update complete');
+  const now = new Date();
+  const utcTime = now.toLocaleTimeString('en-US', { timeZone: 'UTC' });
+  const kstTime = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Seoul' });
+  document.getElementById('last-update').textContent = 'Last update: ' + utcTime + ' UTC / ' + kstTime + ' KST';
   setTimeout(loadAll, 5 * 60 * 1000);
 }
 
@@ -685,7 +688,7 @@ function renderCards() {
   );
 
   if (!items.length) {
-    document.getElementById('grid').innerHTML = '<div class="empty">검색 결과가 없습니다</div>';
+    document.getElementById('grid').innerHTML = '<div class="empty">No search results found</div>';
     return;
   }
 
@@ -755,7 +758,7 @@ function renderChipGrid() {
 
   document.getElementById('chip-grid').innerHTML = filtered.length
     ? filtered.map(item => chipMarkup(item, item.id === selectedChartItemId)).join('')
-    : '<div class="empty" style="padding:2rem;">검색 결과가 없습니다</div>';
+    : '<div class="empty" style="padding:2rem;">No search results found</div>';
 
   renderRecentChips();
 }
@@ -825,7 +828,7 @@ function drawPriceChart(item, rawEntries) {
   if (!entries.length) {
     canvasWrap.style.display = 'none';
     emptyEl.style.display = 'block';
-    emptyEl.textContent = '최근 30일간의 가격 기록이 없습니다';
+    emptyEl.textContent = 'There are no price records for the past 30 days.';
     return;
   }
 
