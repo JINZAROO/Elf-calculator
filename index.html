@@ -284,7 +284,7 @@ async function fetchPrice(itemId) {
   if (data.code !== 0) throw new Error(data.message);
   if (!data.data?.length) return null;
   const d = data.data[0];
-  return (d.totalAmount / 1e8 / d.itemNum);
+  return (d.totalAmount / 1e7 / d.itemNum);
 }
 
 async function loadAll() {
