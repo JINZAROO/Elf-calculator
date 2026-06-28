@@ -6,7 +6,6 @@
 <title>Elf Market Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Noto+Serif+KR:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -423,6 +422,33 @@
   .chart-head-sub { font-size: 11px; color: #a07040; font-family: 'Inter', sans-serif; margin-top: 2px; }
 
   .chart-canvas-wrap { position: relative; height: 280px; }
+
+  .price-svg { width: 100%; height: 100%; display: block; overflow: visible; font-family: 'Inter', sans-serif; }
+  .price-svg .line-path { fill: none; stroke: #c8922a; stroke-width: 2; }
+  .price-svg .fill-path { fill: rgba(200,146,42,0.15); stroke: none; }
+  .price-svg .grid-line { stroke: rgba(139,96,48,0.25); stroke-width: 1; }
+  .price-svg .axis-label { fill: #a07040; font-size: 10px; }
+  .price-svg .data-dot { fill: #7a3e00; }
+  .price-svg .data-dot-hit { fill: transparent; cursor: pointer; }
+  .price-svg .data-dot-hit:hover + .data-dot { r: 4; }
+
+  .chart-tooltip {
+    position: absolute;
+    background: #2b1d0e;
+    border: 1px solid #c8922a;
+    color: #f0c060;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+    transform: translate(-50%, -100%);
+    z-index: 20;
+  }
+  .chart-tooltip.show { opacity: 1; }
 </head>
 <body>
 
@@ -496,7 +522,7 @@
       </div>
     </div>
     <div class="chart-canvas-wrap" id="chart-canvas-wrap" style="display:none;">
-      <canvas id="price-chart"></canvas>
+      <div id="price-chart"></div>
     </div>
   </div>
 </div>
@@ -680,7 +706,6 @@ const ALL_CHART_ITEMS = [...ITEMS.resources, ...ITEMS.costume, ...ITEMS.general]
 
 let priceHistory = null;       // price-history.json 캐시
 let selectedChartItemId = null;
-let priceChartInstance = null;
 
 function getRecentItemIds() {
   try {
@@ -791,54 +816,103 @@ function drawPriceChart(item, rawEntries) {
   canvasWrap.style.display = 'block';
   emptyEl.style.display = 'none';
 
-  const labels = entries.map(e => {
+  renderSvgLineChart(document.getElementById('price-chart'), entries);
+}
+
+function renderSvgLineChart(container, entries) {
+  // ── 레이아웃 설정 ──
+  const W = 800, H = 280;
+  const padL = 56, padR = 16, padT = 16, padB = 36;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  const values = entries.map(e => e.p);
+  let minV = Math.min(...values);
+  let maxV = Math.max(...values);
+  if (minV === maxV) { minV -= minV * 0.1 || 1; maxV += maxV * 0.1 || 1; }
+  const padV = (maxV - minV) * 0.1;
+  minV -= padV; maxV += padV;
+
+  const n = entries.length;
+  const xFor = (i) => padL + (n === 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+  const yFor = (v) => padT + plotH - ((v - minV) / (maxV - minV)) * plotH;
+
+  // ── 그리드 + y축 라벨 (5단) ──
+  const gridCount = 4;
+  let gridSvg = '';
+  let yLabelsSvg = '';
+  for (let g = 0; g <= gridCount; g++) {
+    const v = minV + ((maxV - minV) * g) / gridCount;
+    const y = yFor(v);
+    gridSvg += `<line class="grid-line" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" />`;
+    yLabelsSvg += `<text class="axis-label" x="${padL - 8}" y="${y + 3}" text-anchor="end">${v.toFixed(4)}</text>`;
+  }
+
+  // ── x축 라벨 (최대 6개로 줄여서 표시) ──
+  const xLabelStep = Math.max(1, Math.ceil(n / 6));
+  let xLabelsSvg = '';
+  entries.forEach((e, i) => {
+    if (i % xLabelStep !== 0 && i !== n - 1) return;
     const d = new Date(e.t);
-    return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:00`;
+    const label = `${d.getMonth() + 1}/${d.getDate()}`;
+    xLabelsSvg += `<text class="axis-label" x="${xFor(i)}" y="${H - padB + 16}" text-anchor="middle">${label}</text>`;
   });
-  const dataPoints = entries.map(e => e.p);
 
-  if (priceChartInstance) priceChartInstance.destroy();
+  // ── 선 + 영역 채우기 경로 ──
+  const linePoints = entries.map((e, i) => `${xFor(i)},${yFor(e.p)}`).join(' ');
+  const fillPath = `M${xFor(0)},${yFor(minV)} L${linePoints.split(' ').join(' L')} L${xFor(n - 1)},${yFor(minV)} Z`;
+  const linePath = `M${linePoints.split(' ').join(' L')}`;
 
-  const ctx = document.getElementById('price-chart').getContext('2d');
-  priceChartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: item.name + ' (Sigil)',
-        data: dataPoints,
-        borderColor: '#c8922a',
-        backgroundColor: 'rgba(200,146,42,0.15)',
-        pointRadius: 2,
-        pointBackgroundColor: '#7a3e00',
-        borderWidth: 2,
-        tension: 0.25,
-        fill: true,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: (c) => `${c.parsed.y.toFixed(6)} Sigil`
-          }
-        }
-      },
-      scales: {
-        x: {
-          ticks: { color: '#a07040', maxRotation: 45, minRotation: 45, font: { size: 10 } },
-          grid: { color: 'rgba(139,96,48,0.2)' }
-        },
-        y: {
-          ticks: { color: '#a07040', font: { size: 10 } },
-          grid: { color: 'rgba(139,96,48,0.2)' }
-        }
-      }
-    }
+  // ── 데이터 포인트 (호버 가능한 투명 히트영역 + 실제 점) ──
+  let dotsSvg = '';
+  entries.forEach((e, i) => {
+    const x = xFor(i), y = yFor(e.p);
+    dotsSvg += `<circle class="data-dot-hit" cx="${x}" cy="${y}" r="9"
+      data-price="${e.p}" data-time="${e.t}" onmouseenter="showChartTooltip(event)" onmouseleave="hideChartTooltip()"></circle>
+      <circle class="data-dot" cx="${x}" cy="${y}" r="2.5"></circle>`;
   });
+
+  container.innerHTML = `
+    <svg class="price-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      ${gridSvg}
+      <path class="fill-path" d="${fillPath}"></path>
+      <path class="line-path" d="${linePath}"></path>
+      ${dotsSvg}
+      ${yLabelsSvg}
+      ${xLabelsSvg}
+    </svg>
+    <div class="chart-tooltip" id="chart-tooltip"></div>
+  `;
+}
+
+function showChartTooltip(evt) {
+  const dot = evt.target;
+  const price = parseFloat(dot.getAttribute('data-price'));
+  const time = dot.getAttribute('data-time');
+  const d = new Date(time);
+  const label = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:00 · ${price.toFixed(6)} Sigil`;
+
+  const tooltip = document.getElementById('chart-tooltip');
+  const wrap = document.getElementById('chart-canvas-wrap');
+  const svg = wrap.querySelector('svg');
+  const svgRect = svg.getBoundingClientRect();
+  const wrapRect = wrap.getBoundingClientRect();
+
+  // viewBox 좌표 → 실제 픽셀 좌표로 변환
+  const scaleX = svgRect.width / 800;
+  const scaleY = svgRect.height / 280;
+  const cx = parseFloat(dot.getAttribute('cx')) * scaleX;
+  const cy = parseFloat(dot.getAttribute('cy')) * scaleY;
+
+  tooltip.textContent = label;
+  tooltip.style.left = (svgRect.left - wrapRect.left + cx) + 'px';
+  tooltip.style.top = (svgRect.top - wrapRect.top + cy - 8) + 'px';
+  tooltip.classList.add('show');
+}
+
+function hideChartTooltip() {
+  const tooltip = document.getElementById('chart-tooltip');
+  if (tooltip) tooltip.classList.remove('show');
 }
 
 renderChipGrid();
