@@ -6,6 +6,7 @@
 <title>Elf Market Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Noto+Serif+KR:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -322,7 +323,106 @@
     grid-column: 1/-1;
     font-family: 'Inter', sans-serif;
   }
-</style>
+
+  /* ── 시세 추이 탭 ── */
+  .chip-section-label {
+    font-size: 12px;
+    color: #c8a06a;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 8px;
+  }
+
+  .chip-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .chip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .chip {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: rgba(180,130,60,0.15);
+    border: 2px solid #8b6030;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.15s;
+    overflow: hidden;
+  }
+  .chip img { width: 100%; height: 100%; object-fit: contain; }
+  .chip:hover { border-color: #f0c060; transform: translateY(-2px); }
+  .chip.selected {
+    border-color: #f0c060;
+    background: rgba(240,192,96,0.25);
+    box-shadow: 0 0 0 2px rgba(240,192,96,0.4);
+  }
+  .chip.hidden { display: none; }
+
+  /* 커스텀 툴팁 (title 속성 대신 사용, 모바일에서도 보이도록) */
+  .chip .chip-tip {
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2b1d0e;
+    border: 1px solid #c8922a;
+    color: #f0c060;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s;
+    z-index: 10;
+  }
+  .chip:hover .chip-tip { opacity: 1; }
+
+  .chart-panel {
+    background: linear-gradient(160deg, #f5e8cc 0%, #e8d5aa 100%);
+    border: 2px solid #c8922a;
+    border-radius: 10px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  .chart-panel-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #a07040;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .chart-panel-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 1rem;
+  }
+
+  .chart-img {
+    width: 40px; height: 40px;
+    background: rgba(180,130,60,0.15);
+    border: 1px dashed #c8922a;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    overflow: hidden;
+  }
+  .chart-img img { width: 100%; height: 100%; object-fit: contain; }
+
+  .chart-head-name { font-size: 15px; font-weight: 600; color: #3d2510; }
+  .chart-head-sub { font-size: 11px; color: #a07040; font-family: 'Inter', sans-serif; margin-top: 2px; }
+
+  .chart-canvas-wrap { position: relative; height: 280px; }
 </head>
 <body>
 
@@ -372,9 +472,33 @@
   <div class="coming-soon"><div class="icon">🔮</div><div>준비 중입니다</div></div>
 </div>
 
-<!-- 추가예정1 탭 -->
+<!-- 추가예정1 탭 (시세 추이) -->
 <div class="page" id="page-coming1">
-  <div class="coming-soon"><div class="icon">🚧</div><div>준비 중입니다</div></div>
+  <div class="controls">
+    <input class="search" type="text" id="chart-search" placeholder="아이템 검색..." oninput="renderChipGrid()" />
+  </div>
+
+  <div id="recent-wrap" style="display:none; margin-bottom: 1rem;">
+    <div class="chip-section-label">최근 본 아이템</div>
+    <div class="chip-row" id="recent-chips"></div>
+  </div>
+
+  <div class="chip-section-label">아이템 선택</div>
+  <div class="chip-grid" id="chip-grid"></div>
+
+  <div class="chart-panel" id="chart-panel">
+    <div class="chart-panel-empty" id="chart-empty">아이템을 선택하면 최근 30일 가격 변동 그래프가 표시됩니다</div>
+    <div class="chart-panel-head" id="chart-head" style="display:none;">
+      <div class="chart-img" id="chart-head-img"></div>
+      <div>
+        <div class="chart-head-name" id="chart-head-name"></div>
+        <div class="chart-head-sub" id="chart-head-sub">최근 30일 · Sigil 기준</div>
+      </div>
+    </div>
+    <div class="chart-canvas-wrap" id="chart-canvas-wrap" style="display:none;">
+      <canvas id="price-chart"></canvas>
+    </div>
+  </div>
 </div>
 
 <!-- 추가예정2 탭 -->
@@ -542,6 +666,182 @@ function renderCards() {
 
 renderCards();
 loadAll();
+
+/* ════════════════════════════════════════════
+   추가예정1: 시세 추이 (가격 변동 그래프) 탭
+   ════════════════════════════════════════════ */
+
+const HISTORY_URL = 'data/price-history.json';
+const RECENT_KEY = 'elf-market-recent-items';
+const CHART_DAYS = 30;
+
+// 칩 그리드에 보여줄 전체 아이템 목록 (실시간 탭과 동일 데이터 재사용)
+const ALL_CHART_ITEMS = [...ITEMS.resources, ...ITEMS.costume, ...ITEMS.general];
+
+let priceHistory = null;       // price-history.json 캐시
+let selectedChartItemId = null;
+let priceChartInstance = null;
+
+function getRecentItemIds() {
+  try {
+    return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+  } catch { return []; }
+}
+
+function addRecentItemId(id) {
+  let recent = getRecentItemIds().filter(x => x !== id);
+  recent.unshift(id);
+  recent = recent.slice(0, 6); // 최대 6개만 보관
+  localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+}
+
+function chipMarkup(item, selected) {
+  const src = `${IMG_PATH}${item.id}.png`;
+  const inner = imgCache[item.id] === false
+    ? `<span>${item.emoji}</span>`
+    : `<img src="${src}" alt="${item.name}" onerror="this.parentElement.innerHTML='<span>${item.emoji}</span><span class=\\'chip-tip\\'>${item.name} (${item.korean})</span>'; imgCache[${item.id}]=false;" />`;
+  return `<div class="chip ${selected ? 'selected' : ''}" data-id="${item.id}" onclick="selectChartItem(${item.id})">
+    ${inner}
+    <span class="chip-tip">${item.name} (${item.korean})</span>
+  </div>`;
+}
+
+function renderChipGrid() {
+  const search = document.getElementById('chart-search').value.toLowerCase();
+  const filtered = ALL_CHART_ITEMS.filter(item =>
+    !search || item.name.toLowerCase().includes(search) || item.korean.includes(search) || String(item.id).includes(search)
+  );
+
+  document.getElementById('chip-grid').innerHTML = filtered.length
+    ? filtered.map(item => chipMarkup(item, item.id === selectedChartItemId)).join('')
+    : '<div class="empty" style="padding:2rem;">검색 결과가 없습니다</div>';
+
+  renderRecentChips();
+}
+
+function renderRecentChips() {
+  const recentIds = getRecentItemIds();
+  const wrap = document.getElementById('recent-wrap');
+  if (!recentIds.length) { wrap.style.display = 'none'; return; }
+
+  const recentItems = recentIds
+    .map(id => ALL_CHART_ITEMS.find(it => it.id === id))
+    .filter(Boolean);
+
+  if (!recentItems.length) { wrap.style.display = 'none'; return; }
+
+  wrap.style.display = '';
+  document.getElementById('recent-chips').innerHTML =
+    recentItems.map(item => chipMarkup(item, item.id === selectedChartItemId)).join('');
+}
+
+async function ensurePriceHistoryLoaded() {
+  if (priceHistory) return priceHistory;
+  const res = await fetch(HISTORY_URL, { cache: 'no-store' });
+  if (!res.ok) throw new Error('히스토리 파일을 불러올 수 없습니다 (' + res.status + ')');
+  priceHistory = await res.json();
+  return priceHistory;
+}
+
+async function selectChartItem(itemId) {
+  selectedChartItemId = itemId;
+  addRecentItemId(itemId);
+  renderChipGrid();
+
+  const item = ALL_CHART_ITEMS.find(it => it.id === itemId);
+  if (!item) return;
+
+  document.getElementById('chart-empty').style.display = 'none';
+  document.getElementById('chart-head').style.display = 'flex';
+  document.getElementById('chart-canvas-wrap').style.display = 'block';
+
+  const headImgSrc = `${IMG_PATH}${item.id}.png`;
+  document.getElementById('chart-head-img').innerHTML =
+    imgCache[item.id] === false
+      ? `<span>${item.emoji}</span>`
+      : `<img src="${headImgSrc}" alt="${item.name}" onerror="this.parentElement.innerHTML='<span>${item.emoji}</span>'; imgCache[${item.id}]=false;" />`;
+  document.getElementById('chart-head-name').textContent = `${item.name} (${item.korean})`;
+
+  try {
+    const history = await ensurePriceHistoryLoaded();
+    drawPriceChart(item, history[String(itemId)] || []);
+  } catch (e) {
+    document.getElementById('chart-canvas-wrap').style.display = 'none';
+    document.getElementById('chart-empty').style.display = 'block';
+    document.getElementById('chart-empty').textContent = '가격 기록을 불러오지 못했습니다: ' + e.message;
+  }
+}
+
+function drawPriceChart(item, rawEntries) {
+  const cutoff = Date.now() - CHART_DAYS * 24 * 60 * 60 * 1000;
+  const entries = rawEntries
+    .filter(e => new Date(e.t).getTime() >= cutoff)
+    .sort((a, b) => new Date(a.t) - new Date(b.t));
+
+  const canvasWrap = document.getElementById('chart-canvas-wrap');
+  const emptyEl = document.getElementById('chart-empty');
+
+  if (!entries.length) {
+    canvasWrap.style.display = 'none';
+    emptyEl.style.display = 'block';
+    emptyEl.textContent = '최근 30일간의 가격 기록이 없습니다';
+    return;
+  }
+
+  canvasWrap.style.display = 'block';
+  emptyEl.style.display = 'none';
+
+  const labels = entries.map(e => {
+    const d = new Date(e.t);
+    return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:00`;
+  });
+  const dataPoints = entries.map(e => e.p);
+
+  if (priceChartInstance) priceChartInstance.destroy();
+
+  const ctx = document.getElementById('price-chart').getContext('2d');
+  priceChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: item.name + ' (Sigil)',
+        data: dataPoints,
+        borderColor: '#c8922a',
+        backgroundColor: 'rgba(200,146,42,0.15)',
+        pointRadius: 2,
+        pointBackgroundColor: '#7a3e00',
+        borderWidth: 2,
+        tension: 0.25,
+        fill: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (c) => `${c.parsed.y.toFixed(6)} Sigil`
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#a07040', maxRotation: 45, minRotation: 45, font: { size: 10 } },
+          grid: { color: 'rgba(139,96,48,0.2)' }
+        },
+        y: {
+          ticks: { color: '#a07040', font: { size: 10 } },
+          grid: { color: 'rgba(139,96,48,0.2)' }
+        }
+      }
+    }
+  });
+}
+
+renderChipGrid();
 </script>
 </body>
 </html>
