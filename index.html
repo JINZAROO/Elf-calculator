@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elf Market Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .logo { display: flex; align-items: center; gap: 10px; }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  h1 { font-size: 20px; font-weight: 600; color: #f1f5f9; }
+  .subtitle { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+  .status-bar {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: #64748b;
+  }
+
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #22c55e;
+    animation: pulse 2s infinite;
+  }
+  .dot.error { background: #ef4444; animation: none; }
+  .dot.loading { background: #f59e0b; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .tabs {
+    display: flex; gap: 4px;
+    margin-bottom: 1.5rem;
+    background: #1e2130;
+    border-radius: 10px;
+    padding: 4px;
+    width: fit-content;
+  }
+
+  .tab {
+    padding: 6px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.15s;
+    border: none;
+    background: none;
+  }
+
+  .tab.active { background: #4f46e5; color: #fff; }
+  .tab:hover:not(.active) { color: #e2e8f0; background: #2d3348; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .card {
+    background: #1e2130;
+    border: 1px solid #2d3348;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: border-color 0.15s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card:hover { border-color: #4f46e5; transform: translateY(-2px); }
+
+  .card-name { font-size: 14px; font-weight: 600; color: #f1f5f9; margin-bottom: 4px; }
+  .card-id { font-size: 11px; color: #475569; margin-bottom: 12px; font-family: monospace; }
+  .card-price { font-size: 22px; font-weight: 600; color: #a78bfa; letter-spacing: -0.5px; }
+  .card-price-label { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+  .card.loading .card-price {
+    background: #2d3348;
+    border-radius: 6px;
+    color: transparent;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .card-accent {
+    position: absolute; top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle at top right, #4f46e520, transparent);
+  }
+
+  .controls {
+    display: flex; gap: 8px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search {
+    background: #1e2130;
+    border: 1px solid #2d3348;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #e2e8f0;
+    font-size: 13px;
+    outline: none;
+    width: 200px;
+  }
+  .search:focus { border-color: #4f46e5; }
+
+  button {
+    background: #4f46e5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  button:hover { background: #4338ca; }
+
+  .refresh-btn {
+    background: #1e2130;
+    border: 1px solid #2d3348;
+    color: #e2e8f0;
+  }
+  .refresh-btn:hover { background: #2d3348; border-color: #4f46e5; }
+
+  .last-update { font-size: 12px; color: #475569; margin-left: auto; }
+
+  .error-msg {
+    background: #2d1b1b;
+    border: 1px solid #7f1d1d;
+    border-radius: 8px;
+    padding: 1rem;
+    color: #fca5a5;
+    font-size: 13px;
+    margin-bottom: 1rem;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 4rem;
+    color: #475569;
+    font-size: 14px;
+    grid-column: 1/-1;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🧝</div>
+      <div>
+        <h1>Elf Market Tracker</h1>
+        <div class="subtitle">실시간 마켓플레이스 가격 추적</div>
+      </div>
+    </div>
+    <div class="status-bar">
+      <div class="dot loading" id="dot"></div>
+      <span id="status-text">불러오는 중...</span>
+    </div>
+  </header>
+
+  <div id="error-area"></div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('resources')">🌿 자원</button>
+    <button class="tab" onclick="setTab('costume')">👗 Pi Elf 의상</button>
+    <button class="tab" onclick="setTab('general')">📦 일반</button>
+  </div>
+
+  <div class="controls">
+    <input class="search" type="text" id="search" placeholder="아이템 검색..." oninput="renderCards()" />
+    <button class="refresh-btn" onclick="loadAll()">↻ 새로고침</button>
+    <span class="last-update" id="last-update"></span>
+  </div>
+
+  <div class="grid" id="grid">
+    <div class="empty">가격 정보를 불러오는 중...</div>
+  </div>
+</div>
+
+<script>
+// ✅ 여기에 Vercel 배포 후 받은 URL을 입력하세요
+const API_BASE = 'https://elf-market-api.vercel.app';
+
+const ITEMS = {
+  resources: [
+    {id:21101,name:'Carrot',emoji:'🥕'},
+    {id:21102,name:'Potato',emoji:'🥔'},
+    {id:21103,name:'Pumpkin',emoji:'🎃'},
+    {id:21104,name:'Broccoli',emoji:'🥦'},
+    {id:21105,name:'Corn',emoji:'🌽'},
+    {id:21106,name:'Tomato',emoji:'🍅'},
+    {id:21107,name:'Eggplant',emoji:'🍆'},
+    {id:21110,name:'Resource 21110',emoji:'🌿'},
+    {id:21111,name:'Resource 21111',emoji:'🌿'},
+    {id:21112,name:'Resource 21112',emoji:'🌿'},
+    {id:22101,name:'Resource 22101',emoji:'🪵'},
+    {id:22102,name:'Resource 22102',emoji:'🪵'},
+    {id:22103,name:'Resource 22103',emoji:'🪵'},
+  ],
+  costume: [
+    {id:211,name:'Costume 211',emoji:'👗'},
+    {id:212,name:'Costume 212',emoji:'👗'},
+    {id:213,name:'Costume 213',emoji:'👗'},
+    {id:221,name:'Costume 221',emoji:'👒'},
+    {id:222,name:'Costume 222',emoji:'👒'},
+  ],
+  general: [
+    {id:311,name:'General 311',emoji:'📦'},
+    {id:321,name:'General 321',emoji:'📦'},
+  ]
+};
+
+let prices = {};
+let currentTab = 'resources';
+let accessToken = '';
+
+function setTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['resources','costume','general'][i] === tab);
+  });
+  renderCards();
+}
+
+function setStatus(state, text) {
+  const dot = document.getElementById('dot');
+  dot.className = 'dot' + (state === 'ok' ? '' : state === 'error' ? ' error' : ' loading');
+  document.getElementById('status-text').textContent = text;
+}
+
+async function getAccessToken() {
+  const res = await fetch(`${API_BASE}/api/refresh`, { method: 'POST' });
+  const data = await res.json();
+  if (data.code !== 0) throw new Error('토큰 갱신 실패: ' + data.message);
+  return 'Bearer ' + data.data.accessToken;
+}
+
+async function fetchPrice(itemId) {
+  const url = `${API_BASE}/api/price?itemId=${itemId}&accessToken=${encodeURIComponent(accessToken)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (data.code !== 0) throw new Error(data.message);
+  if (!data.data?.length) return null;
+  const d = data.data[0];
+  return (d.totalAmount / 1e8 / d.itemNum);
+}
+
+async function loadAll() {
+  setStatus('loading', '토큰 갱신 중...');
+  document.getElementById('error-area').innerHTML = '';
+
+  try {
+    accessToken = await getAccessToken();
+  } catch(e) {
+    setStatus('error', '서버 오류');
+    document.getElementById('error-area').innerHTML = `<div class="error-msg">❌ ${e.message}</div>`;
+    return;
+  }
+
+  const allItems = [...ITEMS.resources, ...ITEMS.costume, ...ITEMS.general];
+  let done = 0;
+  setStatus('loading', `가격 조회 중... (0/${allItems.length})`);
+
+  for (const item of allItems) {
+    try {
+      prices[item.id] = await fetchPrice(item.id);
+    } catch(e) {
+      prices[item.id] = null;
+    }
+    done++;
+    setStatus('loading', `가격 조회 중... (${done}/${allItems.length})`);
+    renderCards();
+    await new Promise(r => setTimeout(r, 150));
+  }
+
+  setStatus('ok', '업데이트 완료');
+  document.getElementById('last-update').textContent = '마지막 업데이트: ' + new Date().toLocaleTimeString('ko-KR');
+
+  // 5분마다 자동 갱신
+  setTimeout(loadAll, 5 * 60 * 1000);
+}
+
+function renderCards() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const items = ITEMS[currentTab].filter(item =>
+    !search || item.name.toLowerCase().includes(search) || String(item.id).includes(search)
+  );
+
+  if (!items.length) {
+    document.getElementById('grid').innerHTML = '<div class="empty">검색 결과가 없습니다</div>';
+    return;
+  }
+
+  document.getElementById('grid').innerHTML = items.map(item => {
+    const price = prices[item.id];
+    const hasPrice = price !== undefined;
+    const loading = !hasPrice;
+    return `<div class="card ${loading ? 'loading' : ''}">
+      <div class="card-accent"></div>
+      <div class="card-name">${item.emoji} ${item.name}</div>
+      <div class="card-id">ID: ${item.id}</div>
+      <div class="card-price">${price != null ? price.toFixed(6) : (hasPrice ? 'N/A' : '···')}</div>
+      <div class="card-price-label">π per item (최근 거래가)</div>
+    </div>`;
+  }).join('');
+}
+
+renderCards();
+loadAll();
+</script>
+</body>
+</html>
