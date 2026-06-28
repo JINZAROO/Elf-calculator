@@ -9,6 +9,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
+    padding-top: 116px;
     font-family: 'Noto Serif KR', serif;
     background: #2b1d0e;
     background-image:
@@ -21,6 +22,7 @@
 
   /* ── 고정 헤더 ── */
   .topbar {
+    justify-content: center;
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 100;
@@ -75,6 +77,11 @@
 
   /* ── 큰 탭 ── */
   .main-tabs {
+    position: fixed;        
+    top: 64px;           
+    left: 0; right: 0;     
+    z-index: 99; 
+    justify-content: center;
     display: flex;
     background: linear-gradient(180deg, #3d2510 0%, #2e1c0c 100%);
     border-bottom: 2px solid #c8922a;
