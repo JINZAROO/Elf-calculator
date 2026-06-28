@@ -223,7 +223,7 @@
     text-align: center;
   }
 
-  .card-id {
+  .card-korean {
     font-size: 10px; color: #a07040;
     margin-bottom: 10px;
     font-family: monospace;
@@ -389,38 +389,38 @@ const IMG_PATH = 'images/';
 
 const ITEMS = {
   resources: [
-    {id:21101,name:'Carrot',emoji:'🥕'},
-    {id:21102,name:'Potato',emoji:'🥔'},
-    {id:21103,name:'Pumpkin',emoji:'🎃'},
-    {id:21104,name:'Broccoli',emoji:'🥦'},
-    {id:21105,name:'Tomato',emoji:'🍅'},
-    {id:21106,name:'Beet',emoji:'🫚'},
-    {id:21107,name:'Wheat',emoji:'🌾'},
-    {id:21108,name:'Corn',emoji:'🌽'},
-    {id:21109,name:'Chili',emoji:'🌶️'},
-    {id:21110,name:'Strawberry',emoji:'🍓'},
-    {id:21111,name:'Watermelon',emoji:'🍉'},
-    {id:21112,name:'Ryegrass',emoji:'🌿'},
-    {id:22101,name:'Betel Nut',emoji:'🥜'},
-    {id:22102,name:'Banana',emoji:'🍌'},
-    {id:22103,name:'Dates',emoji:'🫘'},
-    {id:22104,name:'Mango',emoji:'🥭'},
-    {id:22105,name:'Sugar Apple',emoji:'🍈'},
-    {id:22106,name:'Cherry',emoji:'🍒'},
-    {id:22107,name:'Green Plum',emoji:'🍑'},
-    {id:22108,name:'Grape',emoji:'🍇'},
-    {id:22109,name:'Pomegranate',emoji:'🍎'},
-    {id:22110,name:'Coconut',emoji:'🥥'},
-    {id:211,name:'Poplar Wood',emoji:'🪵'},
-    {id:212,name:'Birch Wood',emoji:'🪵'},
-    {id:213,name:'Pine Wood',emoji:'🪵'},
-    {id:214,name:'Oak Wood',emoji:'🪵'},
-    {id:221,name:'Stone',emoji:'🪨'},
-    {id:222,name:'Copper Ore',emoji:'🟤'},
-    {id:223,name:'Iron Ore',emoji:'⚙️'},
-    {id:224,name:'Mithril Ore',emoji:'💎'},
-    {id:311,name:'Egg',emoji:'🥚'},
-    {id:321,name:'Milk',emoji:'🥛'},
+    {id:21101,name:'Carrot', korean:'당근', emoji:'🥕'},
+    {id:21102,name:'Potato', korean:'감자', emoji:'🥔'},
+    {id:21103,name:'Pumpkin', korean:'호박', emoji:'🎃'},
+    {id:21104,name:'Broccoli', korean:'브로콜리', emoji:'🥦'},
+    {id:21105,name:'Tomato', korean:'토마토', emoji:'🍅'},
+    {id:21106,name:'Beet', korean:'비트', emoji:'🫚'},
+    {id:21107,name:'Wheat', korean:'밀', emoji:'🌾'},
+    {id:21108,name:'Corn', korean:'옥수수', emoji:'🌽'},
+    {id:21109,name:'Chili', korean:'고추', emoji:'🌶️'},
+    {id:21110,name:'Strawberry', korean:'딸기', emoji:'🍓'},
+    {id:21111,name:'Watermelon', korean:'수박', emoji:'🍉'},
+    {id:21112,name:'Ryegrass', korean:'호밀풀', emoji:'🌿'},
+    {id:22101,name:'Betel Nut', korean:'빈랑', emoji:'🥜'},
+    {id:22102,name:'Banana', korean:'바나나', emoji:'🍌'},
+    {id:22103,name:'Dates', korean:'대추', emoji:'🫘'},
+    {id:22104,name:'Mango', korean:'망고', emoji:'🥭'},
+    {id:22105,name:'Sugar Apple', korean:'설탕사과', emoji:'🍈'},
+    {id:22106,name:'Cherry', korean:'체리', emoji:'🍒'},
+    {id:22107,name:'Green Plum', korean:'매실', emoji:'🍑'},
+    {id:22108,name:'Grape', korean:'포도', emoji:'🍇'},
+    {id:22109,name:'Pomegranate', korean:'석류', emoji:'🍎'},
+    {id:22110,name:'Coconut', korean:'코코넛', emoji:'🥥'},
+    {id:211,name:'Poplar Wood', korean:'일반나무', emoji:'🪵'},
+    {id:212,name:'Birch Wood', korean:'자작나무', emoji:'🪵'},
+    {id:213,name:'Pine Wood', korean:'소나무', emoji:'🪵'},
+    {id:214,name:'Oak Wood', korean:'참나무', emoji:'🪵'},
+    {id:221,name:'Stone', korean:'돌', emoji:'🪨'},
+    {id:222,name:'Copper Ore', korean:'구리광석', emoji:'🟤'},
+    {id:223,name:'Iron Ore', korean:'철광석', emoji:'⚙️'},
+    {id:224,name:'Mithril Ore', korean:'미스릴광석', emoji:'💎'},
+    {id:311,name:'Egg', korean:'계란', emoji:'🥚'},
+    {id:321,name:'Milk', korean:'우유', emoji:'🥛'},
   ],
   costume: [],
   general: []
@@ -528,7 +528,7 @@ function renderCards() {
     return `<div class="card ${loading ? 'loading' : ''}">
       <div class="card-img">${getImgEl(item)}</div>
       <div class="card-name">${item.name}</div>
-      <div class="card-id">ID: ${item.id}</div>
+      <div class="card-korean">ID: ${item.id}</div>
       <div class="card-divider"></div>
       <div class="card-price">${price != null ? price.toFixed(6) : (hasPrice ? 'N/A' : '···')}</div>
       <div class="card-price-label">π per item (최근 거래가)</div>
