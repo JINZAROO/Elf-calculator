@@ -220,7 +220,6 @@
 </div>
 
 <script>
-// ✅ 여기에 Vercel 배포 후 받은 URL을 입력하세요
 const API_BASE = 'https://elf-market-api.vercel.app';
 
 const ITEMS = {
@@ -229,27 +228,37 @@ const ITEMS = {
     {id:21102,name:'Potato',emoji:'🥔'},
     {id:21103,name:'Pumpkin',emoji:'🎃'},
     {id:21104,name:'Broccoli',emoji:'🥦'},
-    {id:21105,name:'Corn',emoji:'🌽'},
-    {id:21106,name:'Tomato',emoji:'🍅'},
-    {id:21107,name:'Eggplant',emoji:'🍆'},
-    {id:21110,name:'Resource 21110',emoji:'🌿'},
-    {id:21111,name:'Resource 21111',emoji:'🌿'},
-    {id:21112,name:'Resource 21112',emoji:'🌿'},
-    {id:22101,name:'Resource 22101',emoji:'🪵'},
-    {id:22102,name:'Resource 22102',emoji:'🪵'},
-    {id:22103,name:'Resource 22103',emoji:'🪵'},
+    {id:21105,name:'Tomato',emoji:'🍅'},
+    {id:21106,name:'Beet',emoji:'🫚'},
+    {id:21107,name:'Wheat',emoji:'🌾'},
+    {id:21108,name:'Corn',emoji:'🌽'},
+    {id:21109,name:'Chili',emoji:'🌶️'},
+    {id:21110,name:'Strawberry',emoji:'🍓'},
+    {id:21111,name:'Watermelon',emoji:'🍉'},
+    {id:21112,name:'Ryegrass',emoji:'🌿'},
+    {id:22101,name:'Betel Nut',emoji:'🥜'},
+    {id:22102,name:'Banana',emoji:'🍌'},
+    {id:22103,name:'Dates',emoji:'🫘'},
+    {id:22104,name:'Mango',emoji:'🥭'},
+    {id:22105,name:'Sugar Apple',emoji:'🍈'},
+    {id:22106,name:'Cherry',emoji:'🍒'},
+    {id:22107,name:'Green Plum',emoji:'🍑'},
+    {id:22108,name:'Grape',emoji:'🍇'},
+    {id:22109,name:'Pomegranate',emoji:'🍎'},
+    {id:22110,name:'Coconut',emoji:'🥥'},
+    {id:211,name:'Poplar Wood',emoji:'🪵'},
+    {id:212,name:'Birch Wood',emoji:'🪵'},
+    {id:213,name:'Pine Wood',emoji:'🪵'},
+    {id:214,name:'Oak Wood',emoji:'🪵'},
+    {id:221,name:'Stone',emoji:'🪨'},
+    {id:222,name:'Copper Ore',emoji:'🟤'},
+    {id:223,name:'Iron Ore',emoji:'⚙️'},
+    {id:224,name:'Mithril Ore',emoji:'💎'},
+    {id:311,name:'Egg',emoji:'🥚'},
+    {id:321,name:'Milk',emoji:'🥛'},
   ],
-  costume: [
-    {id:211,name:'Costume 211',emoji:'👗'},
-    {id:212,name:'Costume 212',emoji:'👗'},
-    {id:213,name:'Costume 213',emoji:'👗'},
-    {id:221,name:'Costume 221',emoji:'👒'},
-    {id:222,name:'Costume 222',emoji:'👒'},
-  ],
-  general: [
-    {id:311,name:'General 311',emoji:'📦'},
-    {id:321,name:'General 321',emoji:'📦'},
-  ]
+  costume: [],
+  general: []
 };
 
 let prices = {};
@@ -318,7 +327,6 @@ async function loadAll() {
   setStatus('ok', '업데이트 완료');
   document.getElementById('last-update').textContent = '마지막 업데이트: ' + new Date().toLocaleTimeString('ko-KR');
 
-  // 5분마다 자동 갱신
   setTimeout(loadAll, 5 * 60 * 1000);
 }
 
