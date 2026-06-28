@@ -479,62 +479,62 @@
   </div>
   <div class="status-bar">
     <div class="dot loading" id="dot"></div>
-    <span id="status-text">불러오는 중...</span>
+    <span id="status-text">Loading...</span>
   </div>
 </div>
 
 <!-- 큰 탭 -->
 <div class="main-tabs">
-  <button class="main-tab active" onclick="setMainTab('realtime')">실시간</button>
-  <button class="main-tab" onclick="setMainTab('sigil')">Sigil 퀘스트</button>
-  <button class="main-tab" onclick="setMainTab('coming1')">추가예정1</button>
-  <button class="main-tab" onclick="setMainTab('coming2')">추가예정2</button>
+  <button class="main-tab active" onclick="setMainTab('realtime')">Price</button>
+  <button class="main-tab" onclick="setMainTab('sigil')">Sigil Quest</button>
+  <button class="main-tab" onclick="setMainTab('coming1')">Trend</button>
+  <button class="main-tab" onclick="setMainTab('coming2')">Notification</button>
 </div>
 
 <!-- 실시간 탭 -->
 <div class="page active" id="page-realtime">
   <div id="error-area"></div>
   <div class="sub-tabs">
-    <button class="sub-tab active" onclick="setSubTab('resources')">🌿 자원</button>
-    <button class="sub-tab" onclick="setSubTab('costume')">👗 Pi Elf 의상</button>
-    <button class="sub-tab" onclick="setSubTab('general')">📦 일반</button>
+    <button class="sub-tab active" onclick="setSubTab('resources')">🌿 Resources</button>
+    <button class="sub-tab" onclick="setSubTab('costume')">👗 Pi Elf Outfit</button>
+    <button class="sub-tab" onclick="setSubTab('general')">📦 General</button>
   </div>
   <div class="controls">
     <input class="search" type="text" id="search" placeholder="아이템 검색..." oninput="renderCards()" />
-    <button class="refresh-btn" onclick="loadAll()">↻ 새로고침</button>
+    <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
     <span class="last-update" id="last-update"></span>
   </div>
   <div class="grid" id="grid">
-    <div class="empty">가격 정보를 불러오는 중...</div>
+    <div class="empty">Loading price information...</div>
   </div>
 </div>
 
 <!-- Sigil 퀘스트 탭 -->
 <div class="page" id="page-sigil">
-  <div class="coming-soon"><div class="icon">🔮</div><div>준비 중입니다</div></div>
+  <div class="coming-soon"><div class="icon">🔮</div><div>preparing</div></div>
 </div>
 
 <!-- 추가예정1 탭 (시세 추이) -->
 <div class="page" id="page-coming1">
   <div class="controls">
-    <input class="search" type="text" id="chart-search" placeholder="아이템 검색..." oninput="renderChipGrid()" />
+    <input class="search" type="text" id="chart-search" placeholder="Item Search..." oninput="renderChipGrid()" />
   </div>
 
   <div id="recent-wrap" style="display:none; margin-bottom: 1rem;">
-    <div class="chip-section-label">최근 본 아이템</div>
+    <div class="chip-section-label">Recently viewed items</div>
     <div class="chip-row" id="recent-chips"></div>
   </div>
 
-  <div class="chip-section-label">아이템 선택</div>
+  <div class="chip-section-label">Select Item</div>
   <div class="chip-grid" id="chip-grid"></div>
 
   <div class="chart-panel" id="chart-panel">
-    <div class="chart-panel-empty" id="chart-empty">아이템을 선택하면 최근 30일 가격 변동 그래프가 표시됩니다</div>
+    <div class="chart-panel-empty" id="chart-empty">When you select an item, a graph of the price fluctuations over the past 30 days, generated at 1-hour intervals, is displayed.</div>
     <div class="chart-panel-head" id="chart-head" style="display:none;">
       <div class="chart-img" id="chart-head-img"></div>
       <div>
         <div class="chart-head-name" id="chart-head-name"></div>
-        <div class="chart-head-sub" id="chart-head-sub">최근 30일 · Sigil 기준</div>
+        <div class="chart-head-sub" id="chart-head-sub">Last 30 days · Sigil Standard</div>
       </div>
     </div>
     <div class="chart-canvas-wrap" id="chart-canvas-wrap" style="display:none;">
@@ -545,7 +545,7 @@
 
 <!-- 추가예정2 탭 -->
 <div class="page" id="page-coming2">
-  <div class="coming-soon"><div class="icon">🚧</div><div>준비 중입니다</div></div>
+  <div class="coming-soon"><div class="icon">🚧</div><div>Preparing</div></div>
 </div>
 
 <script>
