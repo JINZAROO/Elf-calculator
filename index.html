@@ -14,32 +14,35 @@
     background: #0f1117;
     color: #e2e8f0;
     min-height: 100vh;
-    padding: 2rem 1rem;
+    padding-top: 80px;
   }
 
-  .container { max-width: 960px; margin: 0 auto; }
-
-  header {
+  /* ── 고정 헤더 ── */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: #0f1117;
+    border-bottom: 1px solid #2d3348;
+    padding: 0 2rem;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1rem;
   }
 
   .logo { display: flex; align-items: center; gap: 10px; }
 
   .logo-icon {
-    width: 36px; height: 36px;
+    width: 32px; height: 32px;
     background: linear-gradient(135deg, #7c3aed, #4f46e5);
-    border-radius: 10px;
+    border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
+    font-size: 16px;
   }
 
-  h1 { font-size: 20px; font-weight: 600; color: #f1f5f9; }
-  .subtitle { font-size: 12px; color: #64748b; margin-top: 2px; }
+  h1 { font-size: 17px; font-weight: 600; color: #f1f5f9; }
+  .subtitle { font-size: 11px; color: #64748b; margin-top: 1px; }
 
   .status-bar {
     display: flex; align-items: center; gap: 8px;
@@ -59,7 +62,49 @@
     50% { opacity: 0.4; }
   }
 
-  .tabs {
+  /* ── 큰 탭 ── */
+  .main-tabs {
+    display: flex;
+    border-bottom: 1px solid #2d3348;
+    background: #0f1117;
+    padding: 0 2rem;
+  }
+
+  .main-tab {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+  }
+
+  .main-tab:hover { color: #e2e8f0; }
+  .main-tab.active { color: #a78bfa; border-bottom-color: #a78bfa; }
+
+  /* ── 페이지 콘텐츠 ── */
+  .page { display: none; padding: 2rem; max-width: 960px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* ── 빈 탭 안내 ── */
+  .coming-soon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #475569;
+    font-size: 14px;
+    gap: 12px;
+  }
+  .coming-soon .icon { font-size: 40px; }
+
+  /* ── 실시간 탭 내부 ── */
+  .sub-tabs {
     display: flex; gap: 4px;
     margin-bottom: 1.5rem;
     background: #1e2130;
@@ -68,7 +113,7 @@
     width: fit-content;
   }
 
-  .tab {
+  .sub-tab {
     padding: 6px 16px;
     border-radius: 7px;
     font-size: 13px;
@@ -80,8 +125,8 @@
     background: none;
   }
 
-  .tab.active { background: #4f46e5; color: #fff; }
-  .tab:hover:not(.active) { color: #e2e8f0; background: #2d3348; }
+  .sub-tab.active { background: #4f46e5; color: #fff; }
+  .sub-tab:hover:not(.active) { color: #e2e8f0; background: #2d3348; }
 
   .grid {
     display: grid;
@@ -185,27 +230,38 @@
 </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <div class="logo">
-      <div class="logo-icon">🧝</div>
-      <div>
-        <h1>Elf Market Tracker</h1>
-        <div class="subtitle">실시간 마켓플레이스 가격 추적</div>
-      </div>
-    </div>
-    <div class="status-bar">
-      <div class="dot loading" id="dot"></div>
-      <span id="status-text">불러오는 중...</span>
-    </div>
-  </header>
 
+<!-- 고정 헤더 -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">🧝</div>
+    <div>
+      <h1>Elf Market Tracker</h1>
+      <div class="subtitle">실시간 마켓플레이스 가격 추적</div>
+    </div>
+  </div>
+  <div class="status-bar">
+    <div class="dot loading" id="dot"></div>
+    <span id="status-text">불러오는 중...</span>
+  </div>
+</div>
+
+<!-- 큰 탭 -->
+<div class="main-tabs">
+  <button class="main-tab active" onclick="setMainTab('realtime')">실시간</button>
+  <button class="main-tab" onclick="setMainTab('sigil')">Sigil 퀘스트</button>
+  <button class="main-tab" onclick="setMainTab('coming1')">추가예정1</button>
+  <button class="main-tab" onclick="setMainTab('coming2')">추가예정2</button>
+</div>
+
+<!-- 실시간 탭 -->
+<div class="page active" id="page-realtime">
   <div id="error-area"></div>
 
-  <div class="tabs">
-    <button class="tab active" onclick="setTab('resources')">🌿 자원</button>
-    <button class="tab" onclick="setTab('costume')">👗 Pi Elf 의상</button>
-    <button class="tab" onclick="setTab('general')">📦 일반</button>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="setSubTab('resources')">🌿 자원</button>
+    <button class="sub-tab" onclick="setSubTab('costume')">👗 Pi Elf 의상</button>
+    <button class="sub-tab" onclick="setSubTab('general')">📦 일반</button>
   </div>
 
   <div class="controls">
@@ -216,6 +272,30 @@
 
   <div class="grid" id="grid">
     <div class="empty">가격 정보를 불러오는 중...</div>
+  </div>
+</div>
+
+<!-- Sigil 퀘스트 탭 -->
+<div class="page" id="page-sigil">
+  <div class="coming-soon">
+    <div class="icon">🔮</div>
+    <div>준비 중입니다</div>
+  </div>
+</div>
+
+<!-- 추가예정1 탭 -->
+<div class="page" id="page-coming1">
+  <div class="coming-soon">
+    <div class="icon">🚧</div>
+    <div>준비 중입니다</div>
+  </div>
+</div>
+
+<!-- 추가예정2 탭 -->
+<div class="page" id="page-coming2">
+  <div class="coming-soon">
+    <div class="icon">🚧</div>
+    <div>준비 중입니다</div>
   </div>
 </div>
 
@@ -262,12 +342,20 @@ const ITEMS = {
 };
 
 let prices = {};
-let currentTab = 'resources';
+let currentSubTab = 'resources';
 let accessToken = '';
 
-function setTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach((t,i) => {
+function setMainTab(tab) {
+  document.querySelectorAll('.main-tab').forEach((t, i) => {
+    t.classList.toggle('active', ['realtime','sigil','coming1','coming2'][i] === tab);
+  });
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + tab).classList.add('active');
+}
+
+function setSubTab(tab) {
+  currentSubTab = tab;
+  document.querySelectorAll('.sub-tab').forEach((t, i) => {
     t.classList.toggle('active', ['resources','costume','general'][i] === tab);
   });
   renderCards();
@@ -326,13 +414,12 @@ async function loadAll() {
 
   setStatus('ok', '업데이트 완료');
   document.getElementById('last-update').textContent = '마지막 업데이트: ' + new Date().toLocaleTimeString('ko-KR');
-
   setTimeout(loadAll, 5 * 60 * 1000);
 }
 
 function renderCards() {
   const search = document.getElementById('search').value.toLowerCase();
-  const items = ITEMS[currentTab].filter(item =>
+  const items = ITEMS[currentSubTab].filter(item =>
     !search || item.name.toLowerCase().includes(search) || String(item.id).includes(search)
   );
 
