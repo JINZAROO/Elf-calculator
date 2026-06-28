@@ -528,10 +528,11 @@ function renderCards() {
     return `<div class="card ${loading ? 'loading' : ''}">
       <div class="card-img">${getImgEl(item)}</div>
       <div class="card-name">${item.name}</div>
-      <div class="card-korean">ID: ${item.id}</div>
+      <div class="card-korean">${item.korean}</div>
       <div class="card-divider"></div>
       <div class="card-price">${price != null ? price.toFixed(6) : (hasPrice ? 'N/A' : '···')}</div>
-      <div class="card-price-label">π per item (최근 거래가)</div>
+      <div class="card-price-label">Sigil</div>
+      <div class="card-price-label">Recent transactions(최근 거래가)</div>
     </div>`;
   }).join('');
 }
