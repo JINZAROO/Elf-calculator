@@ -1326,7 +1326,7 @@ function renderCards() {
   );
 
   if (!items.length) {
-    document.getElementById('grid').innerHTML = '<div class="empty">No search results found</div>';
+    document.getElementById('grid').innerHTML = '<div class="empty">Scheduled for update</div>';
     return;
   }
 
@@ -1396,7 +1396,7 @@ function renderChipGrid() {
 
   document.getElementById('chip-grid').innerHTML = filtered.length
     ? filtered.map(item => chipMarkup(item, item.id === selectedChartItemId)).join('')
-    : '<div class="empty" style="padding:2rem;">No search results found</div>';
+    : '<div class="empty" style="padding:2rem;">Scheduled for update</div>';
 
   renderRecentChips();
 }
