@@ -1741,14 +1741,19 @@ async function loadNotifications() {
     // 날짜 최신순 정렬
     const sorted = [...notifications].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    listEl.innerHTML = sorted.map(n => `
-      <div class="notif-card">
-        <div class="notif-head">
+    listEl.innerHTML = sorted.map((n, i) => `
+      <div class="notif-card collapsed" id="notif-card-${i}">
+        <div class="notif-head" onclick="toggleNotif(${i})">
           <span class="notif-title">${n.title}</span>
-          <span class="notif-date">${n.date}</span>
+          <span style="display:flex; align-items:center; gap:8px;">
+            <span class="notif-date">${n.date}</span>
+            <span class="notif-toggle-icon">▼</span>
+          </span>
         </div>
-        <div class="notif-content">${n.content}</div>
-        ${n.image ? `<div class="notif-image"><img src="images/${n.image}" alt="${n.title}" onerror="this.parentElement.style.display='none'" /></div>` : ''}
+        <div class="notif-body">
+          <div class="notif-content">${n.content}</div>
+          ${n.image ? `<div class="notif-image"><img src="images/${n.image}" alt="${n.title}" onerror="this.parentElement.style.display='none'" /></div>` : ''}
+        </div>
       </div>
     `).join('');
   } catch (e) {
@@ -1756,6 +1761,12 @@ async function loadNotifications() {
   }
 }
 
+ function toggleNotif(index) {
+  const card = document.getElementById(`notif-card-${index}`);
+  card.classList.toggle('collapsed');
+}
+
+loadNotifications();
 loadNotifications();
 </script>
 </body>
