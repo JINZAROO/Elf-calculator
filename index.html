@@ -836,12 +836,29 @@
     font-family: 'Inter', sans-serif;
     white-space: pre-wrap;
   }
+  .notif-head {
+    cursor: pointer;
+  }
+  .notif-toggle-icon {
+    font-size: 12px;
+    color: #a07040;
+    transition: transform 0.2s;
+  }
+  .notif-card.collapsed .notif-toggle-icon {
+    transform: rotate(-90deg);
+  }
+  .notif-body {
+    overflow: hidden;
+  }
+  .notif-card.collapsed .notif-body {
+    display: none;
+  }
   .notif-image {
     margin-top: 10px;
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid #c8922a;
-    max-width: 100%;
+    max-width: 280px;
   }
   .notif-image img {
     width: 100%;
