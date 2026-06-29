@@ -801,6 +801,52 @@
    }
    .sq-popup-chip:hover { border-color: #f0c060; background: rgba(240,192,96,0.2); transform: translateY(-2px); }
    .sq-popup-chip.selected-chip { border-color: #f0c060; background: rgba(240,192,96,0.25); box-shadow: 0 0 0 2px rgba(240,192,96,0.4); }
+   /* ── Notification 탭 ── */
+  .notif-card {
+    background: linear-gradient(160deg, #f5e8cc 0%, #e8d5aa 100%);
+    border: 2px solid #c8922a;
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  .notif-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .notif-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #3d2510;
+  }
+  .notif-date {
+    font-size: 11px;
+    color: #a07040;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+  }
+  .notif-content {
+    font-size: 13px;
+    color: #5c3a1a;
+    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+    white-space: pre-wrap;
+  }
+  .notif-image {
+    margin-top: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #c8922a;
+    max-width: 100%;
+  }
+  .notif-image img {
+    width: 100%;
+    display: block;
+  }
    </style>
 </head>
 <body>
@@ -1261,9 +1307,15 @@ function toggleSigilDesc() {
   </div>
 </div>
 
-<!-- 추가예정2 탭 -->
+<!-- Notification 탭 -->
 <div class="page" id="page-coming2">
-  <div class="coming-soon"><div class="icon">🚧</div><div>Preparing</div></div>
+  <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif; margin-bottom:1rem; padding: 10px 14px; background:rgba(0,0,0,0.2); border:1px solid #8b6030; border-radius:8px;">
+  [Page Description] Announcements and updates are posted here.<br>
+  [페이지설명] 공지사항 및 업데이트 소식이 게시됩니다.
+</div>
+  <div id="notif-list">
+    <div class="empty">Loading notifications...</div>
+  </div>
 </div>
 
 <script>
