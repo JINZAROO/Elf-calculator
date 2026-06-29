@@ -2,8 +2,8 @@ name: Fetch Elf Market Prices
 
 on:
   schedule:
-    # 매시 0분에 실행 (UTC 기준! 한국시간(KST)은 UTC+9 입니다)
-    - cron: '0 * * * *'
+    # 매시 7분에 실행 (정각은 GitHub 전체 부하가 몰려 누락/지연이 잘 생김)
+    - cron: '7 * * * *'
   workflow_dispatch: {}  # Actions 탭에서 수동으로도 실행 가능하게
 
 permissions:
