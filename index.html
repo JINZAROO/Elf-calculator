@@ -1135,8 +1135,14 @@ function calcAll() {
 async function loadQuestFoods() {
   try {
     const res = await fetch('quests.json', { cache: 'no-store' });
-    sqFoods = await res.json();
-    console.log(`Sigil Quest: ${sqFoods.length}개 음식 로드 완료`);
+    const raw = await res.json();
+    sqFoods = raw.map(q => ({
+      id: q.id,
+      name: q.id.replace(/_/g, ' '),  // Baked_Potatoes → Baked Potatoes
+      image: q.id,                     // images/Baked_Potatoes.png
+      npc: q.npc,
+      ingredients: q.ingredients
+    }));
   } catch(e) {
     console.warn('quests.json 로드 실패:', e.message);
     sqFoods = [];
