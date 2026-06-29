@@ -839,7 +839,7 @@
     <button class="sub-tab" onclick="setSubTab('general')">📦 General</button>
   </div>
   <div class="controls">
-    <input class="search" .../>
+    <input class="search" type="text" id="search" placeholder="Item Search..." oninput="renderCards()" />
     <span class="last-update" id="last-update"></span>
     <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
   </div>
@@ -1164,7 +1164,7 @@ loadQuestFoods();
 <!-- 시세 추이 탭 -->
 <div class="page" id="page-coming1">
   <div class="controls">
-  <input class="search" type="text" id="search" placeholder="Item Search..." oninput="renderCards()" />
+  <input class="search" type="text" id="chart-search" placeholder="Item Search..." oninput="renderChipGrid()" />
   <span class="last-update" id="last-update"></span>
   <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
 </div>
