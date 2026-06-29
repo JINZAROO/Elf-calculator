@@ -1705,6 +1705,41 @@ function hideChartTooltip() {
 }
 
 renderChipGrid();
+/* ════════════════════════════════════════════
+   Notification 탭
+   ════════════════════════════════════════════ */
+
+async function loadNotifications() {
+  const listEl = document.getElementById('notif-list');
+  try {
+    const res = await fetch('notifications.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('불러올 수 없습니다 (' + res.status + ')');
+    const notifications = await res.json();
+
+    if (!notifications.length) {
+      listEl.innerHTML = '<div class="empty">No notifications yet</div>';
+      return;
+    }
+
+    // 날짜 최신순 정렬
+    const sorted = [...notifications].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    listEl.innerHTML = sorted.map(n => `
+      <div class="notif-card">
+        <div class="notif-head">
+          <span class="notif-title">${n.title}</span>
+          <span class="notif-date">${n.date}</span>
+        </div>
+        <div class="notif-content">${n.content}</div>
+        ${n.image ? `<div class="notif-image"><img src="images/${n.image}" alt="${n.title}" onerror="this.parentElement.style.display='none'" /></div>` : ''}
+      </div>
+    `).join('');
+  } catch (e) {
+    listEl.innerHTML = `<div class="empty">Failed to load notifications: ${e.message}</div>`;
+  }
+}
+
+loadNotifications();
 </script>
 </body>
 </html>
