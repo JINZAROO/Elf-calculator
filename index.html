@@ -313,7 +313,7 @@
   }
   .refresh-btn:hover { border-color: #f0c060; background: linear-gradient(135deg, #7a4520, #5c3317); }
 
-  .last-update { font-size: 11px; color: #a07040; margin-left: auto; font-family: 'Inter', sans-serif; }
+  .last-update { font-size: 11px; color: #a07040; font-family: 'Inter', flex: 1; text-align: center; }
 
   .error-msg {
     background: #4a1a1a;
@@ -830,9 +830,9 @@
     <button class="sub-tab" onclick="setSubTab('general')">📦 General</button>
   </div>
   <div class="controls">
-    <input class="search" type="text" id="search" placeholder="Item Search..." oninput="renderCards()" />
-    <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+    <input class="search" .../>
     <span class="last-update" id="last-update"></span>
+    <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
   </div>
   <div class="grid" id="grid">
     <div class="empty">Loading price information...</div>
