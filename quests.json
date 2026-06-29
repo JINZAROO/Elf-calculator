@@ -180,7 +180,7 @@
   },
   {
     "npc": "Bart",
-    "id": "Mithrill_Ingot",
+    "id": "Mithril_Ingot",
     "ingredients": [
       { "itemId": 224, "qty": 5 }
     ]
