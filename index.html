@@ -1161,8 +1161,10 @@ loadQuestFoods();
 <!-- 시세 추이 탭 -->
 <div class="page" id="page-coming1">
   <div class="controls">
-    <input class="search" type="text" id="chart-search" placeholder="Item Search..." oninput="renderChipGrid()" />
-  </div>
+  <input class="search" type="text" id="search" placeholder="Item Search..." oninput="renderCards()" />
+  <span class="last-update" id="last-update"></span>
+  <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+</div>
 
   <div id="recent-wrap" style="display:none; margin-bottom: 1rem;">
     <div class="chip-section-label">Recently viewed items</div>
