@@ -2,7 +2,7 @@
   {
     "title": "List all marketplace items",
     "date": "2026-06-30",
-    "content": "Information on all items currently being traded on the marketplace has been uploaded.\n\n 1. As the number of items has increased, an Item Classification tab has been added to the Trend tab.(Data for the newly updated item trends will accumulate over time and be displayed on the graph.)\n 2. As the number of items has increased, the price information loading method has been modified from sequential application to prioritizing the current tab when loading item prices.\n\n Have a great day!\n\n 마켓플레이스에서 거래되고 있는 모든 아이템 정보가 업로드 되었습니다.\n\n 1. 아이템수가 증가함에따라 Trend탭의 아이템분류탭이 추가되었습니다. (새로 업데이트된 아이템 트렌드는 시간이 지나야 데이터가 누적되어 그래프에 표시됩니다.)\n 2. 아이템수가 증가함에따라 가격정보 불러오기가 순차적용에서 보고있는 탭우선의 아이템 가격정보 불러오기로 수정되었습니다.\n\n 오늘도 즐거운 하루 되세요,
+    "content": "Information on all items currently being traded on the marketplace has been uploaded.\n\n1. As the number of items has increased, an Item Classification tab has been added to the Trend tab. (Data for the newly updated item trends will accumulate over time and be displayed on the graph.)\n2. As the number of items has increased, the price information loading method has been modified from sequential application to prioritizing the current tab when loading item prices.\n\nHave a great day!\n\n마켓플레이스에서 거래되고 있는 모든 아이템 정보가 업로드 되었습니다.\n\n1. 아이템수가 증가함에따라 Trend탭의 아이템분류탭이 추가되었습니다. (새로 업데이트된 아이템 트렌드는 시간이 지나야 데이터가 누적되어 그래프에 표시됩니다.)\n2. 아이템수가 증가함에따라 가격정보 불러오기가 순차적용에서 보고있는 탭우선의 아이템 가격정보 불러오기로 수정되었습니다.\n\n오늘도 즐거운 하루 되세요!"
     "image": "PinkBunny.gif"
   },
   
