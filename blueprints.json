@@ -69,6 +69,15 @@
     ]
   },
   {
+    "id": 202501,
+    "effect": "Treasure Reward +10%",
+    "ingredients": [
+      { "itemId": 211, "qty": 400 },
+      { "itemId": 2107, "qty": 5 },
+      { "itemId": 2113, "qty": 10 }
+    ]
+  },
+  {
     "id": 201801,
     "effect": "Egg Yield +10%",
     "ingredients": [
@@ -89,6 +98,16 @@
     ]
   },
   {
+    "id": 201007,
+    "effect": "Wheat Yield +0.1",
+    "ingredients": [
+      { "itemId": 212, "qty": 700 },
+      { "itemId": 21107, "qty": 300 },
+      { "itemId": 2111, "qty": 5 },
+      { "itemId": 2116, "qty": 10 }
+    ]
+  },
+  {
     "id": 203004,
     "effect": "Broccoli Growth Time -20%",
     "ingredients": [
@@ -106,6 +125,16 @@
       { "itemId": 21104, "qty": 1000 },
       { "itemId": 2106, "qty": 5 },
       { "itemId": 2111, "qty": 10 }
+    ]
+  },
+  {
+    "id": 204003,
+    "effect": "Logging XP +5%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1000 },
+      { "itemId": 212, "qty": 200 },
+      { "itemId": 2104, "qty": 5 },
+      { "itemId": 2109, "qty": 10 }
     ]
   },
   {
@@ -185,6 +214,16 @@
       { "itemId": 21101, "qty": 4000 },
       { "itemId": 2116, "qty": 5 },
       { "itemId": 2102, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201001,
+    "effect": "Carrot Yield +0.1",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21101, "qty": 4000 },
+      { "itemId": 2101, "qty": 5 },
+      { "itemId": 2106, "qty": 10 }
     ]
   },
   {
