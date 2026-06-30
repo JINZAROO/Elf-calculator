@@ -1495,7 +1495,7 @@ async function loadAll() {
     return;
   }
 
-  const allItems = [...ITEMS.resources, ...ITEMS.costume, ...ITEMS.general];
+  const allItems = [...ITEMS.resources, ...ITEMS.costume, ...ITEMS.general, ...ITEMS.blueprint];
   let done = 0;
   setStatus('loading', `Checking prices... (0/${allItems.length})`);
 
@@ -1556,7 +1556,7 @@ const RECENT_KEY = 'elf-market-recent-items';
 const CHART_DAYS = 30;
 
 // 칩 그리드에 보여줄 전체 아이템 목록 (실시간 탭과 동일 데이터 재사용)
-const ALL_CHART_ITEMS = [...ITEMS.resources, ...ITEMS.costume, ...ITEMS.general];
+const ALL_CHART_ITEMS = [...ITEMS.resources, ...ITEMS.costume, ...ITEMS.general, ...ITEMS.blueprint];
 
 let priceHistory = null;       // price-history.json 캐시
 let selectedChartItemId = null;
