@@ -1141,7 +1141,7 @@ function renderSlot(slot, food) {
 // ITEMS 맵 (itemId → {name, emoji}) — index.html의 ITEMS 사용
 function getItemMeta(itemId) {
   const all = typeof ITEMS !== 'undefined'
-    ? [...(ITEMS.resources||[]), ...(ITEMS.costume||[]), ...(ITEMS.general||[])]
+    ? [...(ITEMS.resources||[]), ...(ITEMS.costume||[]), ...(ITEMS.general||[] ...(ITEMS.blueprint||[])]
     : [];
   return all.find(i => i.id === itemId) || { name: `Item#${itemId}`, emoji: '📦' };
 }
@@ -1415,7 +1415,7 @@ const ITEMS = {
   {id:2208,name:'Exquisite Nautical Charts',korean:'정교한 해도',emoji:'🗺️'},
   {id:2209,name:'Seiko Magnifying Glass',korean:'정밀 돋보기',emoji:'🔍'},
   {id:2210,name:'Music Box',korean:'오르골',emoji:'🎵'},
-]
+],
   blueprint: [
   {id:201001,name:'Rootbud Pin',korean:'루트버드 핀',emoji:'📜'},
   {id:201002,name:'Earthbud Clasp',korean:'어스버드 클래스프',emoji:'📜'},
