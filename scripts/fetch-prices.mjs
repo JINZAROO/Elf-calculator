@@ -8,9 +8,9 @@ import path from 'path';
 const API_BASE = 'https://elf-market-api.vercel.app';
 const HISTORY_PATH = path.join(process.cwd(), 'data', 'price-history.json');
 
-// index.html 의 ITEMS 와 동일한 아이템 목록
-// (나중에 의상/일반 아이템이 추가되면 여기도 같이 추가해주세요)
+// index.html 의 ITEMS 와 동일한 아이템 목록 (resources + costume + general + blueprint)
 const ITEMS = [
+  // ── Resources ──
   { id: 21101, name: 'Carrot' },
   { id: 21102, name: 'Potato' },
   { id: 21103, name: 'Pumpkin' },
@@ -43,6 +43,90 @@ const ITEMS = [
   { id: 224, name: 'Mithril Ore' },
   { id: 311, name: 'Egg' },
   { id: 321, name: 'Milk' },
+
+  // ── Pi Elf Outfit (costume) ──
+  { id: 305002, name: 'CiDi Echo' },
+  { id: 305005, name: 'Tiger Head' },
+  { id: 305012, name: 'Genesis Pioneer' },
+  { id: 305042, name: 'Cosmic Sovereign' },
+  { id: 305049, name: 'Take My Pi' },
+
+  // ── General ──
+  { id: 15, name: 'Gem Gift Card' },
+  { id: 2000, name: 'Damaged Treasure Map' },
+  { id: 2101, name: 'Leather Hydration Bag' },
+  { id: 2102, name: 'Turpentine Torch' },
+  { id: 2103, name: 'Skinning Knife' },
+  { id: 2104, name: 'Animal Skin Quiver' },
+  { id: 2105, name: 'Hunting Horn' },
+  { id: 2106, name: 'Brass Lantern' },
+  { id: 2107, name: 'Whetstone' },
+  { id: 2108, name: 'Sealed Coarse Salt Shaker' },
+  { id: 2109, name: 'Flint' },
+  { id: 2110, name: 'Bundle Of Linen Rope' },
+  { id: 2111, name: 'Hand Drawn Area Sketch' },
+  { id: 2112, name: 'Paint Sealed Letter' },
+  { id: 2113, name: 'Dark Camouflage Cloak' },
+  { id: 2114, name: 'Shabby Metal Sign' },
+  { id: 2115, name: 'Bronze Pocket Watch' },
+  { id: 2116, name: 'Complete Antlers' },
+  { id: 2117, name: 'Old Pipe' },
+  { id: 2118, name: 'Portable Wine Bottle' },
+  { id: 2119, name: 'Animal Tooth Necklace' },
+  { id: 2120, name: 'Animal Bone Dice' },
+  { id: 2201, name: 'Bronze Telescope' },
+  { id: 2202, name: 'Forged Seal' },
+  { id: 2203, name: 'Nautical Compass' },
+  { id: 2204, name: 'Crytal Monocle' },
+  { id: 2205, name: 'Portable Balance' },
+  { id: 2206, name: 'Precision Hourglass' },
+  { id: 2207, name: 'Brass Astrolabe' },
+  { id: 2208, name: 'Exquisite Nautical Charts' },
+  { id: 2209, name: 'Seiko Magnifying Glass' },
+  { id: 2210, name: 'Music Box' },
+
+  // ── Blueprint ──
+  { id: 201001, name: 'Rootbud Pin' },
+  { id: 201002, name: 'Earthbud Clasp' },
+  { id: 201003, name: 'Vine Clip' },
+  { id: 201004, name: 'Greenbud Pin' },
+  { id: 201005, name: 'Rosy Chain' },
+  { id: 201006, name: 'Sweetroot Clasp' },
+  { id: 201007, name: 'Grain Pin' },
+  { id: 201008, name: 'Sungrain Drop' },
+  { id: 201101, name: 'Seedling Pin' },
+  { id: 201102, name: 'Fieldbloom Pin' },
+  { id: 201103, name: 'Rootbloom Pin' },
+  { id: 201104, name: 'Soil Clasp' },
+  { id: 201105, name: 'Vinebloom Clip' },
+  { id: 201106, name: 'Venrdant Pin' },
+  { id: 201107, name: 'Rosy Pin' },
+  { id: 201108, name: 'Rootleaf Pin' },
+  { id: 201801, name: 'Goldgrain Pin' },
+  { id: 201802, name: 'Sungrain Charm' },
+  { id: 202001, name: 'Budwood Charm' },
+  { id: 202002, name: 'Whiteleaf Charm' },
+  { id: 202101, name: 'Pebble Charm' },
+  { id: 202401, name: 'Vigor Charm' },
+  { id: 202501, name: 'Fortune Charm' },
+  { id: 203001, name: 'Rootbud Book' },
+  { id: 203002, name: 'Earthbud Book' },
+  { id: 203003, name: 'Vine Book' },
+  { id: 203004, name: 'Greenbud Book' },
+  { id: 203005, name: 'Rosy Book' },
+  { id: 203006, name: 'Sweetroot Book' },
+  { id: 203007, name: 'Grain Book' },
+  { id: 203008, name: 'Sungrain Book' },
+  { id: 203101, name: 'Seedling Book' },
+  { id: 203102, name: 'Field Book' },
+  { id: 203801, name: 'Workshop Book' },
+  { id: 203802, name: 'Kitchen Book' },
+  { id: 203803, name: 'Bakery Book' },
+  { id: 204001, name: 'Starbell' },
+  { id: 204002, name: 'Field Lamp' },
+  { id: 204003, name: 'Grove Lamp' },
+  { id: 204004, name: 'Mine Lamp' },
+  { id: 204005, name: 'Herd Bell' },
 ];
 
 async function getAccessToken() {
@@ -82,7 +166,6 @@ const MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
 async function main() {
   console.log('토큰 갱신 중...');
   const accessToken = await getAccessToken();
-
   const history = loadHistory();
   const now = new Date().toISOString();
   const cutoff = Date.now() - MAX_AGE_MS;
@@ -94,10 +177,8 @@ async function main() {
         console.log(`#${item.id} ${item.name}: 거래 데이터 없음`);
         continue;
       }
-
       const key = String(item.id);
       if (!history[key]) history[key] = [];
-
       history[key].push({ t: now, p: price });
 
       // 오래된 데이터 정리
@@ -109,7 +190,6 @@ async function main() {
     } catch (e) {
       console.error(`#${item.id} ${item.name} 조회 실패:`, e.message);
     }
-
     // API 부담을 줄이기 위해 약간의 딜레이
     await new Promise((r) => setTimeout(r, 150));
   }
