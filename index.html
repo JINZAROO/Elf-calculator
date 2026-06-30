@@ -1333,7 +1333,28 @@ function toggleSigilDesc() {
 
 <!-- Blueprint 탭 -->
 <div class="page" id="page-blueprint">
-  <div class="coming-soon"><div class="icon">📜</div><div>Preparing</div></div>
+  <div class="controls">
+    <input class="search" type="text" id="bp-search" placeholder="Item Search..." oninput="renderBpGrid()" />
+  </div>
+  <div class="grid" id="bp-grid">
+    <div class="empty">Loading...</div>
+  </div>
+</div>
+
+<!-- Blueprint 상세 팝업 -->
+<div class="sq-popup-overlay" id="bp-detail-popup" style="display:none;" onclick="closeBpDetailOutside(event)">
+  <div class="sq-popup" style="max-width:420px;">
+    <div class="sq-popup-header">
+      <span class="sq-popup-title" id="bp-detail-title">Blueprint</span>
+      <button class="sq-popup-close" onclick="closeBpDetail()">✕</button>
+    </div>
+    <div id="bp-detail-effect" style="background:rgba(240,192,96,0.15); border:1px solid #c8922a; border-radius:8px; padding:8px 12px; margin-bottom:12px; color:#f0c060; font-size:13px; font-weight:700; font-family:'Inter',sans-serif;"></div>
+    <div id="bp-detail-ings" style="display:flex; flex-direction:column; gap:6px;"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid #8b6030;">
+      <span style="font-size:12px; color:#a07040; font-family:'Inter',sans-serif;">Total Cost</span>
+      <span id="bp-detail-total" style="font-size:18px; font-weight:700; color:#f0c060; font-family:'Inter',sans-serif;">···</span>
+    </div>
+  </div>
 </div>
  
 <!-- Notification 탭 -->
@@ -1855,6 +1876,96 @@ async function loadNotifications() {
 }
 
 loadNotifications();
+ 
+ /* ════════════════════════════════════════════
+   Blueprint 탭
+   ════════════════════════════════════════════ */
+
+let bpData = [];
+
+async function loadBlueprints() {
+  try {
+    const res = await fetch('blueprints.json', { cache: 'no-store' });
+    bpData = await res.json();
+  } catch(e) {
+    console.warn('blueprints.json 로드 실패:', e.message);
+    bpData = [];
+  }
+  renderBpGrid();
+}
+
+function getBpMeta(id) {
+  return ITEMS.blueprint.find(i => i.id === id) || { name: `Item#${id}`, korean: '', emoji: '📜' };
+}
+
+function renderBpGrid() {
+  const search = document.getElementById('bp-search').value.toLowerCase();
+  const items = ITEMS.blueprint.filter(item =>
+    !search || item.name.toLowerCase().includes(search) || item.korean.includes(search) || String(item.id).includes(search)
+  );
+
+  if (!items.length) {
+    document.getElementById('bp-grid').innerHTML = '<div class="empty">No search results found</div>';
+    return;
+  }
+
+  document.getElementById('bp-grid').innerHTML = items.map(item => `
+    <div class="card" style="cursor:pointer;" onclick="openBpDetail(${item.id})">
+      <div class="card-img">${getImgEl(item)}</div>
+      <div class="card-name">${item.name}</div>
+      <div class="card-korean">${item.korean}</div>
+    </div>
+  `).join('');
+}
+
+function openBpDetail(itemId) {
+  const bp = bpData.find(b => b.id === itemId);
+  const meta = getBpMeta(itemId);
+
+  document.getElementById('bp-detail-title').textContent = `${meta.name} (${meta.korean})`;
+  document.getElementById('bp-detail-popup').style.display = 'flex';
+
+  if (!bp) {
+    document.getElementById('bp-detail-effect').textContent = 'No crafting data available yet';
+    document.getElementById('bp-detail-ings').innerHTML = '';
+    document.getElementById('bp-detail-total').textContent = '···';
+    return;
+  }
+
+  document.getElementById('bp-detail-effect').textContent = '✨ ' + bp.effect;
+
+  let total = 0;
+  let hasAll = true;
+
+  document.getElementById('bp-detail-ings').innerHTML = bp.ingredients.map(ing => {
+    const ingMeta = getItemMeta(ing.itemId);
+    const imgSrc = `images/${ing.itemId}.png`;
+    const unitPrice = prices[ing.itemId];
+    const cost = unitPrice != null ? unitPrice * ing.qty : null;
+    if (cost == null) hasAll = false; else total += cost;
+
+    return `<div class="sq-ing-row">
+      <div class="sq-ing-img">
+        <img src="${imgSrc}" alt="${ingMeta.name}" onerror="this.outerHTML='<span style=\\'font-size:16px\\'>${ingMeta.emoji}</span>'" />
+      </div>
+      <span class="sq-ing-name">${ingMeta.name}</span>
+      <span class="sq-ing-qty">×${ing.qty}</span>
+      <span class="sq-ing-price">${cost != null ? cost.toFixed(4) : '···'} Sigil</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('bp-detail-total').textContent = hasAll ? total.toFixed(4) + ' Sigil' : 'Loading prices...';
+}
+
+function closeBpDetail() {
+  document.getElementById('bp-detail-popup').style.display = 'none';
+}
+
+function closeBpDetailOutside(e) {
+  if (e.target === document.getElementById('bp-detail-popup')) closeBpDetail();
+}
+
+loadBlueprints();
 </script>
 </body>
 </html>
