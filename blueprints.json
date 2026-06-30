@@ -8,5 +8,351 @@
       { "itemId": 2120, "qty": 5 },
       { "itemId": 2101, "qty": 10 }
     ]
+  },
+  {
+    "id": 202001,
+    "effect": "Poplar Wood Yield +0.1",
+    "ingredients": [
+      { "itemId": 211, "qty": 1000 },
+      { "itemId": 2112, "qty": 5 },
+      { "itemId": 2117, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203002,
+    "effect": "Potato Growth Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21102, "qty": 2500 },
+      { "itemId": 2103, "qty": 5 },
+      { "itemId": 2108, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203102,
+    "effect": "Mining Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1000 },
+      { "itemId": 221, "qty": 200 },
+      { "itemId": 2114, "qty": 5 },
+      { "itemId": 2120, "qty": 10 }
+    ]
+  },
+  {
+    "id": 204002,
+    "effect": "Farming XP +5%",
+    "ingredients": [
+      { "itemId": 21101, "qty": 2000 },
+      { "itemId": 21102, "qty": 1200 },
+      { "itemId": 21103, "qty": 800 },
+      { "itemId": 21104, "qty": 500 }
+    ]
+  },
+  {
+    "id": 201102,
+    "effect": "Potato Yield +10%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21102, "qty": 2500 },
+      { "itemId": 2116, "qty": 5 },
+      { "itemId": 2102, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201801,
+    "effect": "Egg Yield +10%",
+    "ingredients": [
+      { "itemId": 212, "qty": 700 },
+      { "itemId": 311, "qty": 50 },
+      { "itemId": 2120, "qty": 5 },
+      { "itemId": 2101, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203007,
+    "effect": "Wheat Growth Time -10%",
+    "ingredients": [
+      { "itemId": 212, "qty": 700 },
+      { "itemId": 21107, "qty": 300 },
+      { "itemId": 2108, "qty": 5 },
+      { "itemId": 2114, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203004,
+    "effect": "Broccoli Growth Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21104, "qty": 1000 },
+      { "itemId": 2102, "qty": 5 },
+      { "itemId": 2108, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201004,
+    "effect": "Broccoli Yield +0.1",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21104, "qty": 1000 },
+      { "itemId": 2106, "qty": 5 },
+      { "itemId": 2111, "qty": 10 }
+    ]
+  },
+  {
+    "id": 204005,
+    "effect": "Ranching XP +5%",
+    "ingredients": [
+      { "itemId": 212, "qty": 700 },
+      { "itemId": 311, "qty": 50 },
+      { "itemId": 2118, "qty": 5 },
+      { "itemId": 2104, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203801,
+    "effect": "Workshop Processing Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1000 },
+      { "itemId": "Poplar_Plank", "qty": 80 },
+      { "itemId": 2118, "qty": 5 },
+      { "itemId": 2104, "qty": 10 }
+    ]
+  },
+  {
+    "id": 202002,
+    "effect": "Birch Wood Yield +0.1",
+    "ingredients": [
+      { "itemId": 211, "qty": 1000 },
+      { "itemId": 212, "qty": 200 },
+      { "itemId": 2101, "qty": 5 },
+      { "itemId": 2107, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203802,
+    "effect": "Kitchen Processing Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 600 },
+      { "itemId": 2106, "qty": 5 },
+      { "itemId": 2112, "qty": 10 }
+    ]
+  },
+  {
+    "id": 204004,
+    "effect": "Mining XP +5%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1000 },
+      { "itemId": 221, "qty": 200 },
+      { "itemId": 2109, "qty": 5 },
+      { "itemId": 2114, "qty": 10 }
+    ]
+  },
+  {
+    "id": 202101,
+    "effect": "Stone Yield +0.1",
+    "ingredients": [
+      { "itemId": 211, "qty": 1000 },
+      { "itemId": 221, "qty": 200 },
+      { "itemId": 2115, "qty": 5 },
+      { "itemId": 2116, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201103,
+    "effect": "Pumpkin Yield +10%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21103, "qty": 1500 },
+      { "itemId": 21105, "qty": 5 },
+      { "itemId": 2115, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203001,
+    "effect": "Carrot Growth Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21101, "qty": 4000 },
+      { "itemId": 2116, "qty": 5 },
+      { "itemId": 2102, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201108,
+    "effect": "Corn Yield +10%",
+    "ingredients": [
+      { "itemId": 212, "qty": 700 },
+      { "itemId": 21108, "qty": 300 },
+      { "itemId": 2107, "qty": 5 },
+      { "itemId": 2112, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203005,
+    "effect": "Tomato Growth Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21105, "qty": 500 },
+      { "itemId": 2108, "qty": 5 },
+      { "itemId": 2113, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201005,
+    "effect": "Tomato Yield +0.1",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21105, "qty": 500 },
+      { "itemId": 2119, "qty": 5 },
+      { "itemId": 2105, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201107,
+    "effect": "Wheat Yield +10%",
+    "ingredients": [
+      { "itemId": 212, "qty": 700 },
+      { "itemId": 21107, "qty": 300 },
+      { "itemId": 2103, "qty": 5 },
+      { "itemId": 2109, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203101,
+    "effect": "Logging Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1000 },
+      { "itemId": 2105, "qty": 5 },
+      { "itemId": 2106, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201101,
+    "effect": "Carrot Yield +10%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21101, "qty": 4000 },
+      { "itemId": 2111, "qty": 5 },
+      { "itemId": 2117, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201104,
+    "effect": "Broccoli Yield +10%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21104, "qty": 1000 },
+      { "itemId": 2117, "qty": 5 },
+      { "itemId": 2103, "qty": 10 }
+    ]
+  },
+  {
+    "id": 204001,
+    "effect": "Pi Elf XP +5%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21102, "qty": 800 },
+      { "itemId": 21103, "qty": 500 },
+      { "itemId": 21104, "qty": 300 }
+    ]
+  },
+  {
+    "id": 203008,
+    "effect": "Corn Growth Time -10%",
+    "ingredients": [
+      { "itemId": 212, "qty": 700 },
+      { "itemId": 21108, "qty": 300 },
+      { "itemId": 2113, "qty": 5 },
+      { "itemId": 2118, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201802,
+    "effect": "Chicken Feeding Effect +10%",
+    "ingredients": [
+      { "itemId": 212, "qty": 700 },
+      { "itemId": 21107, "qty": 300 },
+      { "itemId": 2109, "qty": 5 },
+      { "itemId": 2115, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201008,
+    "effect": "Corn Yield +0.1",
+    "ingredients": [
+      { "itemId": 212, "qty": 700 },
+      { "itemId": 21108, "qty": 300 },
+      { "itemId": 2105, "qty": 5 },
+      { "itemId": 2110, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203006,
+    "effect": "Beet Growth Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21106, "qty": 300 },
+      { "itemId": 2119, "qty": 5 },
+      { "itemId": 2105, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201006,
+    "effect": "Beet Yield +0.1",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21106, "qty": 300 },
+      { "itemId": 2110, "qty": 5 },
+      { "itemId": 2111, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201106,
+    "effect": "Beet Yield +10%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21106, "qty": 300 },
+      { "itemId": 2115, "qty": 5 },
+      { "itemId": 2120, "qty": 10 }
+    ]
+  },
+  {
+    "id": 202401,
+    "effect": "Max SP +5",
+    "ingredients": [
+      { "itemId": 211, "qty": 800 },
+      { "itemId": 2117, "qty": 5 },
+      { "itemId": 2103, "qty": 10 }
+    ]
+  },
+  {
+    "id": 203003,
+    "effect": "Pumpkin Growth Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21103, "qty": 1500 },
+      { "itemId": 2113, "qty": 5 },
+      { "itemId": 2119, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201003,
+    "effect": "Pumpkin Yield +0.1",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21103, "qty": 1500 },
+      { "itemId": 2104, "qty": 5 },
+      { "itemId": 2110, "qty": 10 }
+    ]
+  },
+  {
+    "id": 201105,
+    "effect": "Tomato Yield +10%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21105, "qty": 500 },
+      { "itemId": 2102, "qty": 5 },
+      { "itemId": 2107, "qty": 10 }
+    ]
   }
 ]
