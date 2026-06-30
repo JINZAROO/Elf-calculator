@@ -1278,6 +1278,49 @@ async function loadQuestFoods() {
 }
 
 loadQuestFoods();
+// quests.json (Bart 포함 모든 npc craft 레시피)에서 id로 찾기
+function findCraftRecipe(craftId) {
+  return sqFoods.find(f => f.id === craftId) || null;
+}
+// ingredientRef: 숫자(itemId) 또는 문자열("Poplar_Plank" 같은 craft id)
+// qty: 필요한 개수
+// depth: 무한루프 방지용
+function resolveIngredientCost(ingredientRef, qty, depth = 0) {
+  if (depth > 5) return { cost: null, breakdown: [] }; // 안전장치
+
+  // 숫자면 = 시장 아이템, 바로 가격 조회
+  if (typeof ingredientRef === 'number') {
+    const meta = getItemMeta(ingredientRef);
+    const unitPrice = prices[ingredientRef];
+    const cost = unitPrice != null ? unitPrice * qty : null;
+    return {
+      cost,
+      breakdown: [{ itemId: ingredientRef, name: meta.name, emoji: meta.emoji, qty, unitPrice, cost, isSubItem: false }]
+    };
+  }
+
+  // 문자열이면 = 제작 아이템(quests.json의 id), 레시피를 찾아 재귀 분해
+  const recipe = findCraftRecipe(ingredientRef);
+  if (!recipe) {
+    return { cost: null, breakdown: [{ itemId: ingredientRef, name: ingredientRef.replace(/_/g,' '), emoji: '❓', qty, unitPrice: null, cost: null, isSubItem: true, missing: true }] };
+  }
+
+  let total = 0;
+  let allItems = [];
+  let hasAll = true;
+
+  for (const ing of recipe.ingredients) {
+    const subQty = ing.qty * qty; // 필요한 craft 개수만큼 배수
+    const sub = resolveIngredientCost(ing.itemId, subQty, depth + 1);
+    if (sub.cost == null) hasAll = false; else total += sub.cost;
+    allItems = allItems.concat(sub.breakdown);
+  }
+
+  return {
+    cost: hasAll ? total : null,
+    breakdown: [{ itemId: ingredientRef, name: recipe.name, emoji: '🔧', qty, unitPrice: null, cost: hasAll ? total : null, isSubItem: true, subBreakdown: allItems }]
+  };
+}
 function toggleSigilDesc() {
     const desc = document.getElementById('sigil-desc');
     const btn = document.getElementById('sigil-desc-btn');
@@ -1949,21 +1992,24 @@ async function openBpDetail(itemId) {
   let hasAll = true;
 
   document.getElementById('bp-detail-ings').innerHTML = bp.ingredients.map(ing => {
-    const ingMeta = getItemMeta(ing.itemId);
-    const imgSrc = `images/${ing.itemId}.png`;
-    const unitPrice = prices[ing.itemId];
-    const cost = unitPrice != null ? unitPrice * ing.qty : null;
-    if (cost == null) hasAll = false; else total += cost;
+  const result = resolveIngredientCost(ing.itemId, ing.qty);
+  if (result.cost == null) hasAll = false; else total += result.cost;
 
-    return `<div class="sq-ing-row">
-      <div class="sq-ing-img">
-        <img src="${imgSrc}" alt="${ingMeta.name}" onerror="this.outerHTML='<span style=\\'font-size:16px\\'>${ingMeta.emoji}</span>'" />
-      </div>
-      <span class="sq-ing-name">${ingMeta.name}</span>
-      <span class="sq-ing-qty">×${ing.qty}</span>
-      <span class="sq-ing-price">${cost != null ? cost.toFixed(4) : '···'} Sigil</span>
-    </div>`;
-  }).join('');
+  const isStr = typeof ing.itemId === 'string';
+  const imgSrc = isStr ? `images/${ing.itemId}.png` : `images/${ing.itemId}.png`;
+  const meta = isStr
+    ? { name: ing.itemId.replace(/_/g,' '), emoji: '🔧' }
+    : getItemMeta(ing.itemId);
+
+  return `<div class="sq-ing-row">
+    <div class="sq-ing-img">
+      <img src="${imgSrc}" alt="${meta.name}" onerror="this.outerHTML='<span style=\\'font-size:16px\\'>${meta.emoji}</span>'" />
+    </div>
+    <span class="sq-ing-name">${meta.name}</span>
+    <span class="sq-ing-qty">×${ing.qty}</span>
+    <span class="sq-ing-price">${result.cost != null ? result.cost.toFixed(4) : '···'} Sigil</span>
+  </div>`;
+}).join('');
 
   document.getElementById('bp-detail-total').textContent = hasAll ? total.toFixed(4) + ' Sigil' : 'Loading prices...';
 }
