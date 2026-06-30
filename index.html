@@ -1492,6 +1492,12 @@ function setSubTab(tab) {
     t.classList.toggle('active', ['resources','costume','general','blueprint'][i] === tab);
   });
   renderCards();
+  
+  // 이 탭의 가격이 아직 없으면 우선 로드
+  const needsLoad = ITEMS[tab].some(item => prices[item.id] == null);
+  if (needsLoad && accessToken) {
+    loadPricesFor(ITEMS[tab]);
+  }
 }
 
 function setStatus(state, text) {
@@ -1517,6 +1523,16 @@ async function fetchPrice(itemId) {
   return (d.totalAmount / 1e9 / d.itemNum);
 }
 
+async function loadPricesFor(itemList) {
+  for (const item of itemList) {
+    if (prices[item.id] != null) continue; // 이미 있으면 스킵
+    try { prices[item.id] = await fetchPrice(item.id); }
+    catch(e) { prices[item.id] = null; }
+    renderCards();
+    await new Promise(r => setTimeout(r, 150));
+  }
+}
+
 async function loadAll() {
   setStatus('loading', '토큰 갱신 중...');
   document.getElementById('error-area').innerHTML = '';
@@ -1528,17 +1544,16 @@ async function loadAll() {
     return;
   }
 
-  const allItems = [...ITEMS.resources, ...ITEMS.costume, ...ITEMS.general, ...ITEMS.blueprint];
-  let done = 0;
-  setStatus('loading', `Checking prices... (0/${allItems.length})`);
+  // 1순위: 현재 보고 있는 탭부터 로드
+  setStatus('loading', 'Loading current tab...');
+  await loadPricesFor(ITEMS[currentSubTab]);
+  setStatus('ok', 'Current tab loaded');
 
-  for (const item of allItems) {
-    try { prices[item.id] = await fetchPrice(item.id); }
-    catch(e) { prices[item.id] = null; }
-    done++;
-    setStatus('loading', `Checking prices... (${done}/${allItems.length})`);
-    renderCards();
-    await new Promise(r => setTimeout(r, 150));
+  // 2순위: 나머지 탭들 백그라운드로 로드
+  const allTabs = ['resources', 'costume', 'general', 'blueprint'];
+  for (const tab of allTabs) {
+    if (tab === currentSubTab) continue;
+    await loadPricesFor(ITEMS[tab]);
   }
 
   setStatus('ok', 'Update complete');
