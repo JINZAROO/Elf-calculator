@@ -901,6 +901,7 @@
     <button class="sub-tab active" onclick="setSubTab('resources')">🌿 Resources</button>
     <button class="sub-tab" onclick="setSubTab('costume')">👗 Pi Elf Outfit</button>
     <button class="sub-tab" onclick="setSubTab('general')">📦 General</button>
+    <button class="sub-tab" onclick="setSubTab('blueprint')">📜 Blue Print</button>
   </div>
   <div class="controls">
   <input class="search" type="text" id="search" placeholder="Item Search..." oninput="renderCards()" />
@@ -1381,7 +1382,51 @@ const ITEMS = {
     {id:321,name:'Milk', korean:'우유', emoji:'🥛'},
   ],
   costume: [],
-  general: []
+  general: [],
+  blueprint: [
+  {id:201001,name:'Rootbud Pin',korean:'루트버드 핀',emoji:'📜'},
+  {id:201002,name:'Earthbud Clasp',korean:'어스버드 클래스프',emoji:'📜'},
+  {id:201003,name:'Vine Clip',korean:'바인 클립',emoji:'📜'},
+  {id:201004,name:'Greenbud Pin',korean:'그린버드 핀',emoji:'📜'},
+  {id:201005,name:'Rosy Chain',korean:'로지 체인',emoji:'📜'},
+  {id:201006,name:'Sweetroot Clasp',korean:'스위트루트 클래스프',emoji:'📜'},
+  {id:201007,name:'Grain Pin',korean:'그레인 핀',emoji:'📜'},
+  {id:201008,name:'Sungrain Drop',korean:'선그레인 드롭',emoji:'📜'},
+  {id:201101,name:'Seedling Pin',korean:'시들링 핀',emoji:'📜'},
+  {id:201102,name:'Fieldbloom Pin',korean:'필드블룸 핀',emoji:'📜'},
+  {id:201103,name:'Rootbloom Pin',korean:'루트블룸 핀',emoji:'📜'},
+  {id:201104,name:'Soil Clasp',korean:'소일 클래스프',emoji:'📜'},
+  {id:201105,name:'Vinebloom Clip',korean:'바인블룸 클립',emoji:'📜'},
+  {id:201106,name:'Venrdant Pin',korean:'벤르단트 핀',emoji:'📜'},
+  {id:201107,name:'Rosy Pin',korean:'로지 핀',emoji:'📜'},
+  {id:201108,name:'Rootleaf Pin',korean:'루트리프 핀',emoji:'📜'},
+  {id:201801,name:'Goldgrain Pin',korean:'골드그레인 핀',emoji:'📜'},
+  {id:201802,name:'Sungrain Charm',korean:'선그레인 참',emoji:'📜'},
+  {id:202001,name:'Budwood Charm',korean:'버드우드 참',emoji:'📜'},
+  {id:202002,name:'Whiteleaf Charm',korean:'화이트리프 참',emoji:'📜'},
+  {id:202101,name:'Pebble Charm',korean:'페블 참',emoji:'📜'},
+  {id:202401,name:'Vigor Charm',korean:'비거 참',emoji:'📜'},
+  {id:202501,name:'Fortune Charm',korean:'포춘 참',emoji:'📜'},
+  {id:203001,name:'Rootbud Book',korean:'루트버드 북',emoji:'📜'},
+  {id:203002,name:'Earthbud Book',korean:'어스버드 북',emoji:'📜'},
+  {id:203003,name:'Vine Book',korean:'바인 북',emoji:'📜'},
+  {id:203004,name:'Greenbud Book',korean:'그린버드 북',emoji:'📜'},
+  {id:203005,name:'Rosy Book',korean:'로지 북',emoji:'📜'},
+  {id:203006,name:'Sweetroot Book',korean:'스위트루트 북',emoji:'📜'},
+  {id:203007,name:'Grain Book',korean:'그레인 북',emoji:'📜'},
+  {id:203008,name:'Sungrain Book',korean:'선그레인 북',emoji:'📜'},
+  {id:203101,name:'Seedling Book',korean:'시들링 북',emoji:'📜'},
+  {id:203102,name:'Field Book',korean:'필드 북',emoji:'📜'},
+  {id:203801,name:'Workshop Book',korean:'워크샵 북',emoji:'📜'},
+  {id:203802,name:'Kitchen Book',korean:'키친 북',emoji:'📜'},
+  {id:203803,name:'Bakery Book',korean:'베이커리 북',emoji:'📜'},
+  {id:204001,name:'Starbell',korean:'스타벨',emoji:'📜'},
+  {id:204002,name:'Field Lamp',korean:'필드 램프',emoji:'📜'},
+  {id:204003,name:'Grove Lamp',korean:'그로브 램프',emoji:'📜'},
+  {id:204004,name:'Mine Lamp',korean:'마인 램프',emoji:'📜'},
+  {id:204005,name:'Herd Bell',korean:'허드 벨',emoji:'📜'},
+]
+   
 };
 
 // 이미지 로드 캐시
@@ -1411,7 +1456,7 @@ function setMainTab(tab) {
 function setSubTab(tab) {
   currentSubTab = tab;
   document.querySelectorAll('.sub-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['resources','costume','general'][i] === tab);
+    t.classList.toggle('active', ['resources','costume','general','blueprint'][i] === tab);
   });
   renderCards();
 }
