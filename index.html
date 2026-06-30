@@ -1305,13 +1305,15 @@ function toggleSigilDesc() {
   <span class="last-update" id="last-update"></span>
 </div>
 
-  <div id="recent-wrap" style="display:none; margin-bottom: 1rem;">
-    <div class="chip-section-label">Recently viewed items</div>
-    <div class="chip-row" id="recent-chips"></div>
-  </div>
+  <div class="sub-tabs">
+  <button class="sub-tab active" onclick="setChartSubTab('resources')">🌿 Resources</button>
+  <button class="sub-tab" onclick="setChartSubTab('costume')">👗 Pi Elf Outfit</button>
+  <button class="sub-tab" onclick="setChartSubTab('general')">📦 General</button>
+  <button class="sub-tab" onclick="setChartSubTab('blueprint')">📜 Blue Print</button>
+</div>
 
-  <div class="chip-section-label">Select Item</div>
-  <div class="chip-grid" id="chip-grid"></div>
+<div class="chip-section-label">Select Item</div>
+<div class="chip-grid" id="chip-grid"></div>
 
   <div class="chart-panel" id="chart-panel">
     <div class="chart-panel-empty" id="chart-empty">When you select an item, a graph of the price fluctuations over the past 30 days, generated at 1-hour intervals, is displayed.</div>
@@ -1614,19 +1616,7 @@ const ALL_CHART_ITEMS = [...ITEMS.resources, ...ITEMS.costume, ...ITEMS.general,
 
 let priceHistory = null;       // price-history.json 캐시
 let selectedChartItemId = null;
-
-function getRecentItemIds() {
-  try {
-    return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
-  } catch { return []; }
-}
-
-function addRecentItemId(id) {
-  let recent = getRecentItemIds().filter(x => x !== id);
-  recent.unshift(id);
-  recent = recent.slice(0, 6); // 최대 6개만 보관
-  localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
-}
+let currentChartSubTab = 'resources'; 
 
 function chipMarkup(item, selected) {
   const src = `${IMG_PATH}${item.id}.png`;
@@ -1639,33 +1629,25 @@ function chipMarkup(item, selected) {
   </div>`;
 }
 
+function setChartSubTab(tab) {
+  currentChartSubTab = tab;
+  document.querySelectorAll('#page-coming1 .sub-tab').forEach((t, i) => {
+    t.classList.toggle('active', ['resources','costume','general','blueprint'][i] === tab);
+  });
+  renderChipGrid();
+}
+
 function renderChipGrid() {
   const search = document.getElementById('chart-search').value.toLowerCase();
-  const filtered = ALL_CHART_ITEMS.filter(item =>
+  const tabItems = ITEMS[currentChartSubTab] || [];
+  const filtered = tabItems.filter(item =>
     !search || item.name.toLowerCase().includes(search) || item.korean.includes(search) || String(item.id).includes(search)
   );
 
   document.getElementById('chip-grid').innerHTML = filtered.length
     ? filtered.map(item => chipMarkup(item, item.id === selectedChartItemId)).join('')
-    : '<div class="empty" style="padding:2rem;">Scheduled for update</div>';
-
-  renderRecentChips();
+    : '<div class="empty" style="padding:2rem;">No items found</div>';
 }
-
-function renderRecentChips() {
-  const recentIds = getRecentItemIds();
-  const wrap = document.getElementById('recent-wrap');
-  if (!recentIds.length) { wrap.style.display = 'none'; return; }
-
-  const recentItems = recentIds
-    .map(id => ALL_CHART_ITEMS.find(it => it.id === id))
-    .filter(Boolean);
-
-  if (!recentItems.length) { wrap.style.display = 'none'; return; }
-
-  wrap.style.display = '';
-  document.getElementById('recent-chips').innerHTML =
-    recentItems.map(item => chipMarkup(item, item.id === selectedChartItemId)).join('');
 }
 
 async function ensurePriceHistoryLoaded() {
@@ -1678,7 +1660,6 @@ async function ensurePriceHistoryLoaded() {
 
 async function selectChartItem(itemId) {
   selectedChartItemId = itemId;
-  addRecentItemId(itemId);
   renderChipGrid();
 
   const item = ALL_CHART_ITEMS.find(it => it.id === itemId);
