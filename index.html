@@ -885,8 +885,9 @@
 <!-- 큰 탭 -->
 <div class="main-tabs">
   <button class="main-tab active" onclick="setMainTab('realtime')">Price</button>
-  <button class="main-tab" onclick="setMainTab('sigil')">Sigil Quest</button>
   <button class="main-tab" onclick="setMainTab('coming1')">Trend</button>
+  <button class="main-tab" onclick="setMainTab('sigil')">Sigil Quest</button>
+  <button class="main-tab" onclick="setMainTab('blueprint')">Blueprint</button>
   <button class="main-tab" onclick="setMainTab('coming2')">Notification</button>
 </div>
 
@@ -1330,6 +1331,11 @@ function toggleSigilDesc() {
   </div>
 </div>
 
+<!-- Blueprint 탭 -->
+<div class="page" id="page-blueprint">
+  <div class="coming-soon"><div class="icon">📜</div><div>Preparing</div></div>
+</div>
+ 
 <!-- Notification 탭 -->
 <div class="page" id="page-coming2">
   <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif; margin-bottom:1rem; padding: 10px 14px; background:rgba(0,0,0,0.2); border:1px solid #8b6030; border-radius:8px;">
@@ -1488,7 +1494,7 @@ let accessToken = '';
 
 function setMainTab(tab) {
   document.querySelectorAll('.main-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['realtime','sigil','coming1','coming2'][i] === tab);
+    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','coming2'][i] === tab);
   });
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
