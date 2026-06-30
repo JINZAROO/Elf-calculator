@@ -1141,7 +1141,7 @@ function renderSlot(slot, food) {
 // ITEMS 맵 (itemId → {name, emoji}) — index.html의 ITEMS 사용
 function getItemMeta(itemId) {
   const all = typeof ITEMS !== 'undefined'
-    ? [...(ITEMS.resources||[]), ...(ITEMS.costume||[]), ...(ITEMS.general||[] ...(ITEMS.blueprint||[])]
+    ? [...(ITEMS.resources||[]), ...(ITEMS.costume||[]), ...(ITEMS.general||[]) ...(ITEMS.blueprint||[])]
     : [];
   return all.find(i => i.id === itemId) || { name: `Item#${itemId}`, emoji: '📦' };
 }
@@ -1647,7 +1647,6 @@ function renderChipGrid() {
   document.getElementById('chip-grid').innerHTML = filtered.length
     ? filtered.map(item => chipMarkup(item, item.id === selectedChartItemId)).join('')
     : '<div class="empty" style="padding:2rem;">No items found</div>';
-}
 }
 
 async function ensurePriceHistoryLoaded() {
