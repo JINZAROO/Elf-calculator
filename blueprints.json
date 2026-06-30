@@ -29,6 +29,16 @@
     ]
   },
   {
+    "id": 201002,
+    "effect": "Potato Yield +0.1",
+    "ingredients": [
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21102, "qty": 2500 },
+      { "itemId": 2114, "qty": 5 },
+      { "itemId": 2119, "qty": 10 }
+    ]
+  },
+  {
     "id": 203102,
     "effect": "Mining Time -20%",
     "ingredients": [
