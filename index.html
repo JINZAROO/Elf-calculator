@@ -1941,6 +1941,7 @@ function openBpDetail(itemId) {
       document.getElementById('bp-detail-total').textContent = 'Loading prices...';
       await loadPricesFor(neededItems);
     }
+  }
 
   document.getElementById('bp-detail-effect').textContent = '✨ ' + bp.effect;
 
