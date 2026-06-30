@@ -1918,7 +1918,7 @@ function renderBpGrid() {
   `).join('');
 }
 
-function openBpDetail(itemId) {
+async function openBpDetail(itemId) {
   const bp = bpData.find(b => b.id === itemId);
   const meta = getBpMeta(itemId);
 
