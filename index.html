@@ -1932,6 +1932,16 @@ function openBpDetail(itemId) {
     return;
   }
 
+  // 추가: 필요한 재료 가격 우선 로드
+  if (accessToken) {
+    const neededItems = bp.ingredients
+      .map(ing => getItemMeta(ing.itemId))
+      .filter(meta => prices[meta.id] == null);
+    if (neededItems.length) {
+      document.getElementById('bp-detail-total').textContent = 'Loading prices...';
+      await loadPricesFor(neededItems);
+    }
+
   document.getElementById('bp-detail-effect').textContent = '✨ ' + bp.effect;
 
   let total = 0;
