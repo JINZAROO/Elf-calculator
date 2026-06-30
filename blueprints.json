@@ -1,0 +1,12 @@
+[
+  {
+    "id": 203803,
+    "effect": "Bakery Processing Time -20%",
+    "ingredients": [
+      { "itemId": 211, "qty": 1000 },
+      { "itemId": 221, "qty": 200 },
+      { "itemId": 2120, "qty": 5 },
+      { "itemId": 2101, "qty": 10 }
+    ]
+  }
+]
