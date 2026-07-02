@@ -2267,8 +2267,10 @@ function openSkinDetail(index) {
     info?.howToObtain || 'Information will be updated soon.';
 
   // Crafting
-  document.getElementById('skin-detail-craft').textContent =
-    info?.crafting ? JSON.stringify(info.crafting) : 'Information will be updated soon.';
+  // Crafting
+document.getElementById('skin-detail-craft').textContent =
+  info?.crafting === null ? 'None' :
+  info?.crafting ? JSON.stringify(info.crafting) : 'Information will be updated soon.';
 
   document.getElementById('skin-detail-popup').style.display = 'flex';
 }
