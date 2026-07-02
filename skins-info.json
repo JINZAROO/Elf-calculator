@@ -160,6 +160,18 @@
     ]
   },
   {
+    "skinName": "Hornwood Spirit",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Moo Moo",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
     "skinName": "Prairie Wanderer",
     "effect": "Egg Yield +0.2 / Ranching XP +10%",
     "howToObtain": "Can be crafted via the in-game NPC Elise until July 23, 2026. Additional crafting is not possible as all quantities have been released.",
@@ -186,5 +198,18 @@
       { "itemId": 222, "qty": 150 },
       { "itemId": 2201, "qty": 10 }
     ]
-  }
+  },
+  {
+    "skinName": "Pumpkin Whisper",
+    "effect": "Tomato Yield +10% / Tomato Growth Time -5%",
+    "howToObtain": "Can be crafted via the in-game NPC Elise until July 23, 2026.",
+    "crafting": [
+      { "itemId": 21101, "qty": 1000 },
+      { "itemId": 21102, "qty": 500 },
+      { "itemId": 21103, "qty": 300 },
+      { "itemId": 21104, "qty": 100 },
+      { "itemId": 211, "qty": 500 },
+      { "itemId": 2107, "qty": 5 }
+    ]
+  },
 ]
