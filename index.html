@@ -2234,14 +2234,42 @@ function renderSkinsGrid() {
   `).join('');
 }
 
+let skinsInfoData = [];
+
+async function loadSkinsInfo() {
+  try {
+    const res = await fetch('skins-info.json', { cache: 'no-store' });
+    skinsInfoData = await res.json();
+  } catch(e) {
+    console.warn('skins-info.json 로드 실패:', e.message);
+  }
+}
+
+loadSkinsInfo();
+
 function openSkinDetail(index) {
   const skin = skinsData[index];
   if (!skin) return;
+
+  const info = skinsInfoData.find(s => s.skinName === skin.skinName.trim()) || null;
 
   document.getElementById('skin-detail-title').textContent = skin.skinName.trim();
   document.getElementById('skin-detail-img').src = skin.skinUrl;
   document.getElementById('skin-detail-img').alt = skin.skinName;
   document.getElementById('skin-detail-qty').textContent = skin.quantity.toLocaleString() + ' ea';
+
+  // Effect
+  document.getElementById('skin-detail-effect').textContent =
+    info?.effect || 'Information will be updated soon.';
+
+  // How to Obtain
+  document.getElementById('skin-detail-obtain').textContent =
+    info?.howToObtain || 'Information will be updated soon.';
+
+  // Crafting
+  document.getElementById('skin-detail-craft').textContent =
+    info?.crafting ? JSON.stringify(info.crafting) : 'Information will be updated soon.';
+
   document.getElementById('skin-detail-popup').style.display = 'flex';
 }
 
