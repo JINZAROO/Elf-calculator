@@ -1144,6 +1144,20 @@ function renderSlot(slot, food) {
   renderIngredients(slot, food);
 }
 
+// 텍스트 안의 URL을 클릭 가능한 링크로 변환 (개행도 <br>로 변환)
+function linkify(text) {
+  if (!text) return '';
+  const escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const withLinks = escaped.replace(urlRegex,
+    '<a href="$1" target="_blank" rel="noopener" style="color:#f0c060; text-decoration:underline;">$1</a>'
+  );
+  return withLinks.replace(/\n/g, '<br>');
+}
+
 // ITEMS 맵 (itemId → {name, emoji}) — index.html의 ITEMS 사용
 function getItemMeta(itemId) {
   const all = typeof ITEMS !== 'undefined'
@@ -2287,8 +2301,8 @@ async function openSkinDetail(index) {
 
   document.getElementById('skin-detail-effect').textContent =
     info?.effect || 'Information will be updated soon.';
-  document.getElementById('skin-detail-obtain').textContent =
-    info?.howToObtain || 'Information will be updated soon.';
+  document.getElementById('skin-detail-obtain').innerHTML =
+  linkify(info?.howToObtain) || 'Information will be updated soon.';
 
   // 팝업을 먼저 띄우고, 재료 부분은 아래에서 채운다
   document.getElementById('skin-detail-popup').style.display = 'flex';
