@@ -202,7 +202,7 @@
     "ingredients": [
       { "itemId": 211, "qty": 1400 },
       { "itemId": 21103, "qty": 1500 },
-      { "itemId": 21105, "qty": 5 },
+      { "itemId": 2110, "qty": 5 },
       { "itemId": 2115, "qty": 10 }
     ]
   },
