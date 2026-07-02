@@ -2268,9 +2268,39 @@ function openSkinDetail(index) {
 
   // Crafting
   // Crafting
-document.getElementById('skin-detail-craft').textContent =
-  info?.crafting === null ? 'None' :
-  info?.crafting ? JSON.stringify(info.crafting) : 'Information will be updated soon.';
+// Crafting
+const craftEl = document.getElementById('skin-detail-craft');
+if (!info || info.crafting === undefined) {
+  craftEl.textContent = 'Information will be updated soon.';
+} else if (info.crafting === null) {
+  craftEl.textContent = 'None';
+} else {
+  let total = 0;
+  let hasAll = true;
+
+  const rows = info.crafting.map(ing => {
+    const result = resolveIngredientCost(ing.itemId, ing.qty);
+    if (result.cost == null) hasAll = false; else total += result.cost;
+    const isStr = typeof ing.itemId === 'string';
+    const meta = isStr ? { name: ing.itemId.replace(/_/g,' '), emoji: '🔧' } : getItemMeta(ing.itemId);
+    const imgSrc = `images/${ing.itemId}.png`;
+    return `<div class="sq-ing-row">
+      <div class="sq-ing-img">
+        <img src="${imgSrc}" alt="${meta.name}" onerror="this.outerHTML='<span style=\\'font-size:16px\\'>${meta.emoji}</span>'" />
+      </div>
+      <span class="sq-ing-name">${meta.name}</span>
+      <span class="sq-ing-qty">×${ing.qty}</span>
+      <span class="sq-ing-price">${result.cost != null ? result.cost.toFixed(4) : '···'} Sigil</span>
+    </div>`;
+  }).join('');
+
+  const totalRow = `<div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:8px; border-top:1px solid #8b6030;">
+    <span style="font-size:13px; color:#a07040; font-family:'Inter',sans-serif;">Total Cost</span>
+    <span style="font-size:18px; font-weight:700; color:#f0c060; font-family:'Inter',sans-serif;">${hasAll ? total.toFixed(4) + ' Sigil' : 'Loading prices...'}</span>
+  </div>`;
+
+  craftEl.innerHTML = rows + totalRow;
+}
 
   document.getElementById('skin-detail-popup').style.display = 'flex';
 }
