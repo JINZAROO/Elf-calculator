@@ -1421,34 +1421,42 @@ function toggleSigilDesc() {
 
 <!-- Skins 상세 팝업 -->
 <div class="sq-popup-overlay" id="skin-detail-popup" style="display:none;" onclick="closeSkinDetailOutside(event)">
-  <div class="sq-popup" style="max-width:480px;">
-    <div class="sq-popup-header">
-      <span class="sq-popup-title" id="skin-detail-title">Skin</span>
-      <button class="sq-popup-close" onclick="closeSkinDetail()">✕</button>
-    </div>
-    <!-- 스킨 이미지 -->
+  <div class="sq-popup" style="max-width:480px; max-height:85vh; display:flex; flex-direction:column;">
+  <div class="sq-popup-header">
+    <span class="sq-popup-title" id="skin-detail-title">Skin</span>
+    <button class="sq-popup-close" onclick="closeSkinDetail()">✕</button>
+  </div>
+
+  <!-- 고정 상단: 이미지 / 수량 / 효과 / 획득방법 -->
+  <div style="flex-shrink:0;">
     <div style="display:flex; justify-content:center; margin-bottom:14px;">
       <img id="skin-detail-img" src="" alt="" style="width:140px; height:140px; object-fit:contain; border-radius:12px; background:rgba(180,130,60,0.1); border:1px solid #c8922a;" />
     </div>
-    <!-- 수량 -->
     <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(180,130,60,0.1); border-radius:8px; padding:8px 14px; margin-bottom:12px;">
       <span style="font-size:13px; color:#a07040; font-family:'Inter',sans-serif;">Server Quantity</span>
       <span id="skin-detail-qty" style="font-size:18px; font-weight:700; color:#f0c060; font-family:'Inter',sans-serif;"></span>
     </div>
-    <!-- 나머지 정보 (추후 업데이트) -->
-    <div style="display:flex; flex-direction:column; gap:8px;">
-      <div style="background:rgba(180,130,60,0.08); border-radius:8px; padding:10px 14px;">
-        <div style="font-size:11px; color:#a07040; font-family:'Inter',sans-serif; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Effect</div>
-        <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif;" id="skin-detail-effect">Information will be updated soon.</div>
-      </div>
-      <div style="background:rgba(180,130,60,0.08); border-radius:8px; padding:10px 14px;">
-        <div style="font-size:11px; color:#a07040; font-family:'Inter',sans-serif; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">How to Obtain</div>
-        <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif;" id="skin-detail-obtain">Information will be updated soon.</div>
-      </div>
-      <div style="background:rgba(180,130,60,0.08); border-radius:8px; padding:10px 14px;">
-        <div style="font-size:11px; color:#a07040; font-family:'Inter',sans-serif; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Crafting Materials & Cost</div>
-        <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif;" id="skin-detail-craft">Information will be updated soon.</div>
-      </div>
+    <div style="background:rgba(180,130,60,0.08); border-radius:8px; padding:10px 14px; margin-bottom:8px;">
+      <div style="font-size:11px; color:#a07040; font-family:'Inter',sans-serif; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Effect</div>
+      <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif;" id="skin-detail-effect">Information will be updated soon.</div>
+    </div>
+    <div style="background:rgba(180,130,60,0.08); border-radius:8px; padding:10px 14px; margin-bottom:8px;">
+      <div style="font-size:11px; color:#a07040; font-family:'Inter',sans-serif; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">How to Obtain</div>
+      <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif;" id="skin-detail-obtain">Information will be updated soon.</div>
+    </div>
+    <div style="font-size:11px; color:#a07040; font-family:'Inter',sans-serif; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Crafting Materials & Cost</div>
+  </div>
+
+  <!-- 스크롤 영역: 재료 목록만 -->
+  <div style="overflow-y:auto; flex:1; min-height:0; padding-right:4px; margin-bottom:8px;">
+    <div id="skin-detail-craft" style="display:flex; flex-direction:column; gap:6px;">Information will be updated soon.</div>
+  </div>
+
+  <!-- 고정 Total Cost -->
+  <div id="skin-detail-total-wrap" style="display:none; border-top:2px solid #8b6030; padding-top:10px; flex-shrink:0;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:14px; color:#a07040; font-family:'Inter',sans-serif;">Total Cost</span>
+      <span id="skin-detail-total" style="font-size:20px; font-weight:700; color:#f0c060; font-family:'Inter',sans-serif;">···</span>
     </div>
   </div>
 </div>
@@ -2270,10 +2278,15 @@ function openSkinDetail(index) {
   // Crafting
 // Crafting
 const craftEl = document.getElementById('skin-detail-craft');
+const totalWrap = document.getElementById('skin-detail-total-wrap');
+const totalEl = document.getElementById('skin-detail-total');
+
 if (!info || info.crafting === undefined) {
   craftEl.textContent = 'Information will be updated soon.';
+  totalWrap.style.display = 'none';
 } else if (info.crafting === null) {
   craftEl.textContent = 'None';
+  totalWrap.style.display = 'none';
 } else {
   let total = 0;
   let hasAll = true;
@@ -2294,12 +2307,9 @@ if (!info || info.crafting === undefined) {
     </div>`;
   }).join('');
 
-  const totalRow = `<div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:8px; border-top:1px solid #8b6030;">
-    <span style="font-size:13px; color:#a07040; font-family:'Inter',sans-serif;">Total Cost</span>
-    <span style="font-size:18px; font-weight:700; color:#f0c060; font-family:'Inter',sans-serif;">${hasAll ? total.toFixed(4) + ' Sigil' : 'Loading prices...'}</span>
-  </div>`;
-
-  craftEl.innerHTML = rows + totalRow;
+  craftEl.innerHTML = rows;
+  totalEl.textContent = hasAll ? total.toFixed(4) + ' Sigil' : 'Loading prices...';
+  totalWrap.style.display = 'block';
 }
 
   document.getElementById('skin-detail-popup').style.display = 'flex';
