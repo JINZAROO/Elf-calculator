@@ -2,7 +2,25 @@
   {
     "skinName": "Genesis Pioneer",
     "effect": "Logging Time -20% / Pi Elf XP +10%",
-    "howToObtain": "Awarded to the first 10,000 people to complete the CiDi Games tutorial.\nAll editions have been distributed. No longer obtainable.",
+    "howToObtain": "Awarded to the first 10,000 people to complete the CiDi Games tutorial.\nAll editions have been distributed.\nNo longer obtainable.",
+    "crafting": null
+  },
+  {
+    "skinName": "Pioneer Spark",
+    "effect": "Logging Time -10% / Max XP +10",
+    "howToObtain": "Pi ELF Skins 15 Owned.\nCiDi Games-Profile-Badge-Collector Lv.5",
+    "crafting": null
+  },
+  {
+    "skinName": "Pioneer Swift",
+    "effect": "Character not released",
+    "howToObtain": "Consecutive Sign-In 90 Days.\nCiDi Games-Profile-Badge-Streakkeeper Lv.6",
+    "crafting": null
+  },
+  {
+    "skinName": "Take My Pi",
+    "effect": "Pi Elf XP +10% / Treasure Reward +10%",
+    "howToObtain": "Rewards for users who deposited Pi Coin into the test address prior to the release of the CiDiGames beta version.\nNo longer obtainable.",
     "crafting": null
   },
   {
@@ -11,6 +29,36 @@
   "howToObtain": "CiDi Voice participation, check the link for details: https://x.com/PlayCiDi/status/2056353796108759143?s=20",
   "crafting": null
 },
+  {
+    "skinName": "Arale",
+    "effect": "Potato Yeield +10%",
+    "howToObtain": "Total Games 10 Reviewed. \nCiDi Games-Profile-Badge-Reviewer Lv.3",
+    "crafting": null
+  },
+  {
+    "skinName": "Pink Bunny",
+    "effect": "Character not released",
+    "howToObtain": "Total Platform Tournament 30 Entries. \nCiDi Games-Profile-Badge-Contender Lv.5",
+    "crafting": null
+  },
+  {
+    "skinName": "Trailblazer",
+    "effect": "Max Sp +3 / Treasure Reward +5%",
+    "howToObtain": "Distributed to users who checked in for 7 days after the launch of the CiDiGames open beta.\nNo longer obtainable.",
+    "crafting": null
+  },
+  {
+    "skinName": "Shark Hoodie",
+    "effect": "Broccoli Yield +10%",
+    "howToObtain": "Total 20 Game Played. \nCiDi Games-Profile-Badge-Explorer Lv.5",
+    "crafting": null
+  },
+  {
+    "skinName": "Arcane Prince",
+    "effect": "Crops Yield +10% / Crops Growth Time -10%",
+    "howToObtain": "Total 128000 CiDiCoin Top-up. \nCiDi Games-Profile-Badge-Patron Lv.10",
+    "crafting": null
+  },
   {
     "skinName": "Prairie Wanderer",
     "effect": "Egg Yield +0.2 / Ranching XP +10%",
