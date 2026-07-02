@@ -1411,6 +1411,9 @@ function toggleSigilDesc() {
     [Page Description] All Pi Elf skins currently released on the server, including quantity information.<br>
     [페이지설명] 서버에 공개된 모든 Pi Elf 스킨과 수량 정보입니다.
   </div>
+  <div class="controls">
+    <input class="search" type="text" id="skins-search" placeholder="Skin Search..." oninput="renderSkinsGrid()" />
+  </div>
   <div class="grid" id="skins-grid">
     <div class="empty">Loading skins...</div>
   </div>
@@ -2208,7 +2211,18 @@ function renderSkinsGrid() {
     return;
   }
 
-  grid.innerHTML = skinsData.map((skin, i) => `
+  const search = document.getElementById('skins-search')?.value.toLowerCase() || '';
+  const filtered = skinsData.filter(skin =>
+    !search || skin.skinName.toLowerCase().includes(search)
+  );
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty">No search results found.</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map((skin, i) => `
+    <div class="card" style="cursor:pointer;" onclick="openSkinDetail(${skinsData.indexOf(skin)})">
     <div class="card" style="cursor:pointer;" onclick="openSkinDetail(${i})">
       <div class="card-img">
         <img src="${skin.skinUrl}" alt="${skin.skinName}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:36px\\'>👗</span>'" />
