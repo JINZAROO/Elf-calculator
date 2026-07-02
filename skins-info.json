@@ -86,7 +86,7 @@
   {
     "skinName": "Toy Sheriff",
     "effect": "Carrot Yield +10%",
-    "howToObtain": "Before information update",
+    "howToObtain": "Completed the CiDi Games tutorial.\nCiDi Games-Profile",
     "crafting": null
   },
   {
@@ -209,7 +209,7 @@
       { "itemId": 21103, "qty": 300 },
       { "itemId": 21104, "qty": 100 },
       { "itemId": 211, "qty": 500 },
-      { "itemId": 2107, "qty": 5 }
+      { "itemId": 2105, "qty": 5 }
     ]
   }
 ]
