@@ -211,5 +211,166 @@
       { "itemId": 211, "qty": 500 },
       { "itemId": 2105, "qty": 5 }
     ]
+  },
+  {
+    "skinName": "Treasure Hunter",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Workshop Artisan",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Octo Pirate",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Steel Enforcer",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Starborn Warrior",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Heroic Guardian",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Mantis Fighter",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Alien Hunter",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Stardeep Warden",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Arena Gladiatoer",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Claw Ranger",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Wolf Hood",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Desert Lizard",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Shield Commander",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Emerald Sage",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Frost Enchantress",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Flame Brawler",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Bio Warrior",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Erost Envoy",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Flame Runner",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Zombie Walker",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Bubble Beast",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Pumpkin Head",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Dark Ooze",
+    "effect": "Character not released",
+    "howToObtain": "Character not released",
+    "crafting": null
+  },
+  {
+    "skinName": "Tree Guardian",
+    "effect": "Birch Wood Yield +0.1 / Birch Wood Logging Time -20%",
+    "howToObtain": "Can be crafted via the in-game NPC Elise until July 23, 2026.\nAdditional crafting is not possible as all quantities have been released.",
+    "crafting": [
+      { "itemId": 201001, "qty": 1 },
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21101, "qty": 4000 },
+      { "itemId": 2101, "qty": 5 },
+      { "itemId": 2106, "qty": 10 },
+      { "itemId": 212, "qty": 150 },
+      { "itemId": 221, "qty": 150 },
+      { "itemId": 213, "qty": 30 },
+      { "itemId": 222, "qty": 30 },
+      { "itemId": 2109, "qty": 10 }
+    ]
   }
 ]
