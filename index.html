@@ -2223,7 +2223,6 @@ function renderSkinsGrid() {
 
   grid.innerHTML = filtered.map((skin, i) => `
     <div class="card" style="cursor:pointer;" onclick="openSkinDetail(${skinsData.indexOf(skin)})">
-    <div class="card" style="cursor:pointer;" onclick="openSkinDetail(${i})">
       <div class="card-img">
         <img src="${skin.skinUrl}" alt="${skin.skinName}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:36px\\'>👗</span>'" />
       </div>
