@@ -1287,6 +1287,25 @@ loadQuestFoods();
 function findCraftRecipe(craftId) {
   return sqFoods.find(f => f.id === craftId) || null;
 }
+
+// crafting 재료 목록에서 실제 마켓 아이템(itemId가 숫자)만 재귀적으로 모두 모으기
+function collectLeafItemIds(ingredients, depth = 0) {
+  if (depth > 5 || !ingredients) return [];
+  let ids = [];
+  for (const ing of ingredients) {
+    if (typeof ing.itemId === 'number') {
+      ids.push(ing.itemId);
+    } else {
+      const recipe = findCraftRecipe(ing.itemId);
+      if (recipe) {
+        ids = ids.concat(collectLeafItemIds(recipe.ingredients, depth + 1));
+      }
+    }
+  }
+  return ids;
+}
+
+     
 // ingredientRef: 숫자(itemId) 또는 문자열("Poplar_Plank" 같은 craft id)
 // qty: 필요한 개수
 // depth: 무한루프 방지용
@@ -2255,7 +2274,7 @@ async function loadSkinsInfo() {
 
 loadSkinsInfo();
 
-function openSkinDetail(index) {
+async function openSkinDetail(index) {
   const skin = skinsData[index];
   if (!skin) return;
 
@@ -2266,28 +2285,43 @@ function openSkinDetail(index) {
   document.getElementById('skin-detail-img').alt = skin.skinName;
   document.getElementById('skin-detail-qty').textContent = skin.quantity.toLocaleString() + ' ea';
 
-  // Effect
   document.getElementById('skin-detail-effect').textContent =
     info?.effect || 'Information will be updated soon.';
-
-  // How to Obtain
   document.getElementById('skin-detail-obtain').textContent =
     info?.howToObtain || 'Information will be updated soon.';
 
-  // Crafting
-  // Crafting
-// Crafting
-const craftEl = document.getElementById('skin-detail-craft');
-const totalWrap = document.getElementById('skin-detail-total-wrap');
-const totalEl = document.getElementById('skin-detail-total');
+  // 팝업을 먼저 띄우고, 재료 부분은 아래에서 채운다
+  document.getElementById('skin-detail-popup').style.display = 'flex';
 
-if (!info || info.crafting === undefined) {
-  craftEl.textContent = 'Information will be updated soon.';
-  totalWrap.style.display = 'none';
-} else if (info.crafting === null) {
-  craftEl.textContent = 'None';
-  totalWrap.style.display = 'none';
-} else {
+  const craftEl = document.getElementById('skin-detail-craft');
+  const totalWrap = document.getElementById('skin-detail-total-wrap');
+  const totalEl = document.getElementById('skin-detail-total');
+
+  if (!info || info.crafting === undefined) {
+    craftEl.textContent = 'Information will be updated soon.';
+    totalWrap.style.display = 'none';
+    return;
+  }
+  if (info.crafting === null) {
+    craftEl.textContent = 'None';
+    totalWrap.style.display = 'none';
+    return;
+  }
+
+  // ── 필요한 재료 가격 우선 로드 (Blueprint 탭과 동일 방식) ──
+  if (accessToken) {
+    const leafIds = collectLeafItemIds(info.crafting);
+    const neededItems = [...new Set(leafIds)]
+      .filter(id => prices[id] == null)
+      .map(id => ({ id }));
+
+    if (neededItems.length) {
+      craftEl.textContent = 'Loading prices...';
+      totalWrap.style.display = 'none';
+      await loadPricesFor(neededItems);
+    }
+  }
+
   let total = 0;
   let hasAll = true;
 
