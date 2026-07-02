@@ -4,5 +4,33 @@
     "effect": "Logging Time -20% / Pi Elf XP +10%",
     "howToObtain": "Awarded to the first 10,000 people to complete the CiDi Games tutorial.\nAll editions have been distributed. No longer obtainable.",
     "crafting": null
+  },
+  {
+    "skinName": "Prairie Wanderer",
+    "effect": "Egg Yield +0.2 / Ranching XP +10%",
+    "howToObtain": "Can be crafted via the in-game NPC Elise until July 23, 2026. Additional crafting is not possible as all quantities have been released.",
+    "crafting": [
+      { "itemId": 201101, "qty": 1 },
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21101, "qty": 4000 },
+      { "itemId": 2111, "qty": 5 },
+      { "itemId": 2117, "qty": 10 },
+      { "itemId": 201003, "qty": 1 },
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21103, "qty": 1500 },
+      { "itemId": 2104, "qty": 5 },
+      { "itemId": 2110, "qty": 10 },
+      { "itemId": 201004, "qty": 1 },
+      { "itemId": 211, "qty": 1400 },
+      { "itemId": 21104, "qty": 1000 },
+      { "itemId": 2106, "qty": 5 },
+      { "itemId": 2111, "qty": 10 },
+      { "itemId": 311, "qty": 200 },
+      { "itemId": 212, "qty": 300 },
+      { "itemId": 221, "qty": 300 },
+      { "itemId": 213, "qty": 150 },
+      { "itemId": 222, "qty": 150 },
+      { "itemId": 2201, "qty": 10 }
+    ]
   }
 ]
