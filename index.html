@@ -1720,7 +1720,7 @@ let accessToken = '';
 
 function setMainTab(tab) {
   document.querySelectorAll('.main-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint',skins','coming2','privacy'][i] === tab);
+    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','skins','coming2','privacy'][i] === tab);
   });
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
