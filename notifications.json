@@ -1,5 +1,11 @@
 [
   {
+    "title": "Skins Information Tab Launched",
+    "date": "2026-07-02",
+    "content": "All skin information is shared in real-time.\nIt contains all information regarding skin acquisition methods, server quantities, and crafting materials, quantities, and prices.\n\n모든 스킨정보가 실시간으로 공유됩니다.\n스킨획득방법, 서버내에 수량, 스킨제작재료/수량/가격 모든 정보가 담겨있습니다. ",
+    "image": "SharkHoodie.gif"
+  },
+  {
     "title": "LBlueprint Crafting Tab Launched",
     "date": "2026-06-30",
     "content": "View crafting materials at a glance!\n Linked with real-time material price data, you can now also check the Sigil required for crafting.\n\n We would like to thank [DogPi90] for their contribution to the crafting material information.\n\n 제작재료 이제 한눈에 보세요!\n 재료의 실시간 가격데이터와 연동되어 제작시 필요한 Sigil도 확인 가능합니다.\n\n 제작 재료정보 도움주신 [DogPi90]님께 감사의 말씀드립니다.",
