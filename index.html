@@ -891,6 +891,7 @@
   <button class="main-tab" onclick="setMainTab('sigil')">Sigil Quest</button>
   <button class="main-tab" onclick="setMainTab('coming1')">Trend</button>
   <button class="main-tab" onclick="setMainTab('blueprint')">Blueprint</button>
+  <button class="main-tab" onclick="setMainTab('skins')">Skins</button>
   <button class="main-tab" onclick="setMainTab('coming2')">Notification</button>
   <button class="main-tab" onclick="setMainTab('privacy')">Privacy Policy</button>
 </div>
@@ -1403,6 +1404,51 @@ function toggleSigilDesc() {
     </div>
   </div>
 </div>
+
+<!-- Skins 탭 -->
+<div class="page" id="page-skins">
+  <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif; margin-bottom:1rem; padding:10px 14px; background:rgba(0,0,0,0.2); border:1px solid #8b6030; border-radius:8px;">
+    [Page Description] All Pi Elf skins currently released on the server, including quantity information.<br>
+    [페이지설명] 서버에 공개된 모든 Pi Elf 스킨과 수량 정보입니다.
+  </div>
+  <div class="grid" id="skins-grid">
+    <div class="empty">Loading skins...</div>
+  </div>
+</div>
+
+<!-- Skins 상세 팝업 -->
+<div class="sq-popup-overlay" id="skin-detail-popup" style="display:none;" onclick="closeSkinDetailOutside(event)">
+  <div class="sq-popup" style="max-width:480px;">
+    <div class="sq-popup-header">
+      <span class="sq-popup-title" id="skin-detail-title">Skin</span>
+      <button class="sq-popup-close" onclick="closeSkinDetail()">✕</button>
+    </div>
+    <!-- 스킨 이미지 -->
+    <div style="display:flex; justify-content:center; margin-bottom:14px;">
+      <img id="skin-detail-img" src="" alt="" style="width:140px; height:140px; object-fit:contain; border-radius:12px; background:rgba(180,130,60,0.1); border:1px solid #c8922a;" />
+    </div>
+    <!-- 수량 -->
+    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(180,130,60,0.1); border-radius:8px; padding:8px 14px; margin-bottom:12px;">
+      <span style="font-size:13px; color:#a07040; font-family:'Inter',sans-serif;">Server Quantity</span>
+      <span id="skin-detail-qty" style="font-size:18px; font-weight:700; color:#f0c060; font-family:'Inter',sans-serif;"></span>
+    </div>
+    <!-- 나머지 정보 (추후 업데이트) -->
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div style="background:rgba(180,130,60,0.08); border-radius:8px; padding:10px 14px;">
+        <div style="font-size:11px; color:#a07040; font-family:'Inter',sans-serif; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Effect</div>
+        <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif;">Information will be updated soon.</div>
+      </div>
+      <div style="background:rgba(180,130,60,0.08); border-radius:8px; padding:10px 14px;">
+        <div style="font-size:11px; color:#a07040; font-family:'Inter',sans-serif; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">How to Obtain</div>
+        <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif;">Information will be updated soon.</div>
+      </div>
+      <div style="background:rgba(180,130,60,0.08); border-radius:8px; padding:10px 14px;">
+        <div style="font-size:11px; color:#a07040; font-family:'Inter',sans-serif; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Crafting Materials & Cost</div>
+        <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif;">Information will be updated soon.</div>
+      </div>
+    </div>
+  </div>
+</div>
  
 <!-- Notification 탭 -->
 <div class="page" id="page-coming2">
@@ -1671,7 +1717,7 @@ let accessToken = '';
 
 function setMainTab(tab) {
   document.querySelectorAll('.main-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','coming2','privacy'][i] === tab);
+    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','Skins','coming2','privacy'][i] === tab);
   });
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
@@ -2136,6 +2182,76 @@ function closeBpDetailOutside(e) {
 }
 
 loadBlueprints();
+
+/* ════════════════════════════════════════════
+   Skins 탭
+   ════════════════════════════════════════════ */
+
+let skinsData = [];
+
+async function loadSkins() {
+  const grid = document.getElementById('skins-grid');
+  try {
+    const res = await fetch('https://api-prd.cidi.games/api/v1/elf/skins');
+    const data = await res.json();
+    skinsData = data.skins || [];
+    renderSkinsGrid();
+  } catch(e) {
+    grid.innerHTML = '<div class="empty">Failed to load skins.</div>';
+  }
+}
+
+function renderSkinsGrid() {
+  const grid = document.getElementById('skins-grid');
+  if (!skinsData.length) {
+    grid.innerHTML = '<div class="empty">No skins found.</div>';
+    return;
+  }
+
+  grid.innerHTML = skinsData.map((skin, i) => `
+    <div class="card" style="cursor:pointer;" onclick="openSkinDetail(${i})">
+      <div class="card-img">
+        <img src="${skin.skinUrl}" alt="${skin.skinName}" onerror="this.parentElement.innerHTML='<span style=\\'font-size:36px\\'>👗</span>'" />
+      </div>
+      <div class="card-name">${skin.skinName.trim()}</div>
+      <div class="card-divider"></div>
+      <div class="card-price" style="font-size:15px;">${skin.quantity.toLocaleString()}</div>
+      <div class="card-price-label">Server Quantity</div>
+    </div>
+  `).join('');
+}
+
+function openSkinDetail(index) {
+  const skin = skinsData[index];
+  if (!skin) return;
+
+  document.getElementById('skin-detail-title').textContent = skin.skinName.trim();
+  document.getElementById('skin-detail-img').src = skin.skinUrl;
+  document.getElementById('skin-detail-img').alt = skin.skinName;
+  document.getElementById('skin-detail-qty').textContent = skin.quantity.toLocaleString() + ' ea';
+  document.getElementById('skin-detail-popup').style.display = 'flex';
+}
+
+function closeSkinDetail() {
+  document.getElementById('skin-detail-popup').style.display = 'none';
+}
+
+function closeSkinDetailOutside(e) {
+  if (e.target === document.getElementById('skin-detail-popup')) closeSkinDetail();
+}
+
+// Skins 탭 클릭 시 로드 (최초 1회만)
+let skinsLoaded = false;
+const origSetMainTab = setMainTab;
+// setMainTab 확장: skins 탭 진입 시 자동 로드
+const _setMainTab = setMainTab;
+setMainTab = function(tab) {
+  _setMainTab(tab);
+  if (tab === 'skins' && !skinsLoaded) {
+    skinsLoaded = true;
+    loadSkins();
+  }
+};
 </script>
 </body>
 </html>
