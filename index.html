@@ -1699,6 +1699,12 @@ renderCoinCurrencyChips();
 fetchPiPrice();
 fetchForexRates();
 
+// 5분마다 Pi 코인 시세 + 환율 자동 갱신
+setInterval(() => {
+  fetchPiPrice();
+  fetchForexRates();
+}, 5 * 60 * 1000);
+
 function getCidiSigilRate() {
   if (typeof prices === 'undefined' || prices[CIDI_SIGIL_ITEM_ID] == null) return null;
   return prices[CIDI_SIGIL_ITEM_ID] / CIDI_SIGIL_BASE_QTY; // 1 CiDiCoin당 Sigil 수량
