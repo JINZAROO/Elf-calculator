@@ -907,6 +907,35 @@
 }
      
 .notif-bell.has-unread .notif-badge { display: block; }
+
+     .coin-currency-chip {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  color: #a07040;
+  background: rgba(180,130,60,0.12);
+  border: 2px solid #8b6030;
+  transition: all 0.15s;
+}
+.coin-currency-chip:hover { border-color: #f0c060; color: #f0c060; }
+.coin-currency-chip.selected {
+  background: linear-gradient(135deg, #c8922a, #a07030);
+  color: #fff8e8;
+  border-color: #f0c060;
+}
+.coin-result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(180,130,60,0.1);
+  border-radius: 7px;
+  padding: 8px 12px;
+}
+.coin-result-label { font-size: 12px; color: #7a4520; }
+.coin-result-value { font-size: 16px; font-weight: 700; color: #7a3e00; }
    </style>
 </head>
 <body>
