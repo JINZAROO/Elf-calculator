@@ -1606,6 +1606,18 @@ function toggleSigilDesc() {
     <div id="coin-pi-error" style="display:none; color:#c0392b; font-size:12px; font-family:'Inter',sans-serif; margin-bottom:8px; font-weight:700;"></div>
     <div id="coin-pi-result" style="display:flex; flex-direction:column; gap:6px;"></div>
   </div>
+
+  <!-- Sigil 계산 -->
+  <div class="chart-panel" style="margin-top:1.5rem;">
+    <div style="font-size:14px; font-weight:700; color:#3d2510; margin-bottom:12px;">💰 Sigil → CiDi Coin / Pi Coin / Currency</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+      <input type="number" class="sq-reward-input" id="coin-sigil-input" placeholder="0" style="width:160px;" />
+      <span style="font-size:13px; color:#7a4520; font-family:'Inter',sans-serif; font-weight:700;">Sigil</span>
+      <button class="sq-calc-btn" onclick="calcFromSigil()">Calculate</button>
+    </div>
+    <div id="coin-sigil-error" style="display:none; color:#c0392b; font-size:12px; font-family:'Inter',sans-serif; margin-bottom:8px; font-weight:700;"></div>
+    <div id="coin-sigil-result" style="display:flex; flex-direction:column; gap:6px;"></div>
+  </div>
 </div>
 
 <script>
@@ -1765,6 +1777,42 @@ function calcFromPi() {
   resultEl.innerHTML = `
     <div class="coin-result-row"><span class="coin-result-label">Equivalent CiDi Coin</span><span class="coin-result-value">${cidiEquivalent.toFixed(4)} CiDi</span></div>
     <div class="coin-result-row"><span class="coin-result-label">Equivalent Sigil (market rate)</span><span class="coin-result-value">${sigilEquivalent != null ? sigilEquivalent.toFixed(4) + ' Sigil' : 'Loading...'}</span></div>
+    <div class="coin-result-row"><span class="coin-result-label">Value in ${selectedCurrency}</span><span class="coin-result-value">${fiatValue != null ? fiatValue.toLocaleString(undefined,{maximumFractionDigits:4}) + ' ' + selectedCurrency : '···'}</span></div>
+  `;
+}
+
+function calcFromSigil() {
+  const errorEl = document.getElementById('coin-sigil-error');
+  const resultEl = document.getElementById('coin-sigil-result');
+
+  if (!selectedCurrency) {
+    errorEl.textContent = 'Please select a currency unit.';
+    errorEl.style.display = 'block';
+    resultEl.innerHTML = '';
+    return;
+  }
+  errorEl.style.display = 'none';
+
+  const sigilAmount = parseFloat(document.getElementById('coin-sigil-input').value);
+  if (isNaN(sigilAmount) || sigilAmount <= 0) {
+    resultEl.innerHTML = '<div class="coin-result-row"><span class="coin-result-label">Please enter a Sigil amount.</span></div>';
+    return;
+  }
+
+  const sigilRate = getCidiSigilRate();
+  if (piPriceUSD == null || forexRates == null || sigilRate == null) {
+    resultEl.innerHTML = '<div class="coin-result-row"><span class="coin-result-label">Loading exchange rates...</span></div>';
+    return;
+  }
+
+  const cidiEquivalent = sigilAmount / sigilRate;
+  const usdValue = cidiEquivalent * CIDI_USD_PEG;
+  const piNeeded = usdValue / piPriceUSD;
+  const fiatValue = formatCurrencyValue(usdValue);
+
+  resultEl.innerHTML = `
+    <div class="coin-result-row"><span class="coin-result-label">Required CiDi Coin</span><span class="coin-result-value">${cidiEquivalent.toFixed(4)} CiDi</span></div>
+    <div class="coin-result-row"><span class="coin-result-label">Required Pi Coin</span><span class="coin-result-value">${piNeeded.toFixed(8)} π</span></div>
     <div class="coin-result-row"><span class="coin-result-label">Value in ${selectedCurrency}</span><span class="coin-result-value">${fiatValue != null ? fiatValue.toLocaleString(undefined,{maximumFractionDigits:4}) + ' ' + selectedCurrency : '···'}</span></div>
   `;
 }
