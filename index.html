@@ -2705,13 +2705,16 @@ function closeSkinDetailOutside(e) {
 // Skins 탭 클릭 시 로드 (최초 1회만)
 let skinsLoaded = false;
 const origSetMainTab = setMainTab;
-// setMainTab 확장: skins 탭 진입 시 자동 로드
+// setMainTab 확장: skins 탭 진입 시 자동 로드, Exchange 탭 진입 시 아이템ID 15 시세 우선 로드
 const _setMainTab = setMainTab;
 setMainTab = function(tab) {
   _setMainTab(tab);
   if (tab === 'skins' && !skinsLoaded) {
     skinsLoaded = true;
     loadSkins();
+  }
+  if (tab === 'coin' && accessToken) {
+    loadPricesFor([{ id: CIDI_SIGIL_ITEM_ID }]);
   }
 };
 </script>
