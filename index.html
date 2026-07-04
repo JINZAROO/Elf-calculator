@@ -1645,15 +1645,15 @@ const CIDI_SIGIL_ITEM_ID = 15;
 const CIDI_SIGIL_BASE_QTY = 1000;
 
 const FIAT_CURRENCIES = [
-  { code: 'USD', label: 'US Dollar', flag: '🇺🇸' },
-  { code: 'KRW', label: 'Korean Won', flag: '🇰🇷' },
-  { code: 'JPY', label: 'Japanese Yen', flag: '🇯🇵' },
-  { code: 'CNY', label: 'Chinese Yuan', flag: '🇨🇳' },
-  { code: 'EUR', label: 'Euro', flag: '🇪🇺' },
-  { code: 'VND', label: 'Vietnamese Dong', flag: '🇻🇳' },
-  { code: 'TWD', label: 'Taiwan Dollar', flag: '🇹🇼' },
-  { code: 'PHP', label: 'Philippine Peso', flag: '🇵🇭' },
-  { code: 'SGD', label: 'Singapore Dollar', flag: '🇸🇬' },
+  { code: 'USD', label: 'US Dollar', flagCode: 'us' },
+  { code: 'KRW', label: 'Korean Won', flagCode: 'kr' },
+  { code: 'JPY', label: 'Japanese Yen', flagCode: 'jp' },
+  { code: 'CNY', label: 'Chinese Yuan', flagCode: 'cn' },
+  { code: 'EUR', label: 'Euro', flagCode: 'eu' },
+  { code: 'VND', label: 'Vietnamese Dong', flagCode: 'vn' },
+  { code: 'TWD', label: 'Taiwan Dollar', flagCode: 'tw' },
+  { code: 'PHP', label: 'Philippine Peso', flagCode: 'ph' },
+  { code: 'SGD', label: 'Singapore Dollar', flagCode: 'sg' },
 ];
 
 let piPriceUSD = null;
@@ -1665,7 +1665,7 @@ function renderCoinCurrencyChips() {
   if (!row) return;
   row.innerHTML = FIAT_CURRENCIES.map(c => `
     <div class="coin-currency-chip ${selectedCurrency === c.code ? 'selected' : ''}" onclick="selectCoinCurrency('${c.code}')">
-      <span style="font-size:15px; margin-right:4px;">${c.flag}</span>${c.code}
+      <img src="https://flagcdn.com/24x18/${c.flagCode}.png" alt="${c.code}" style="width:18px; height:13px; object-fit:cover; border-radius:2px; vertical-align:middle; margin-right:5px;" />${c.code}
     </div>
   `).join('');
 }
