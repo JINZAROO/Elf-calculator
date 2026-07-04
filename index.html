@@ -1645,15 +1645,15 @@ const CIDI_SIGIL_ITEM_ID = 15;
 const CIDI_SIGIL_BASE_QTY = 1000;
 
 const FIAT_CURRENCIES = [
-  { code: 'USD', label: 'US Dollar' },
-  { code: 'KRW', label: 'Korean Won' },
-  { code: 'JPY', label: 'Japanese Yen' },
-  { code: 'CNY', label: 'Chinese Yuan' },
-  { code: 'EUR', label: 'Euro' },
-  { code: 'VND', label: 'Vietnamese Dong' },
-  { code: 'TWD', label: 'Taiwan Dollar' },
-  { code: 'PHP', label: 'Philippine Peso' },
-  { code: 'SGD', label: 'Singapore Dollar' },
+  { code: 'USD', label: 'US Dollar', flag: '🇺🇸' },
+  { code: 'KRW', label: 'Korean Won', flag: '🇰🇷' },
+  { code: 'JPY', label: 'Japanese Yen', flag: '🇯🇵' },
+  { code: 'CNY', label: 'Chinese Yuan', flag: '🇨🇳' },
+  { code: 'EUR', label: 'Euro', flag: '🇪🇺' },
+  { code: 'VND', label: 'Vietnamese Dong', flag: '🇻🇳' },
+  { code: 'TWD', label: 'Taiwan Dollar', flag: '🇹🇼' },
+  { code: 'PHP', label: 'Philippine Peso', flag: '🇵🇭' },
+  { code: 'SGD', label: 'Singapore Dollar', flag: '🇸🇬' },
 ];
 
 let piPriceUSD = null;
@@ -1664,7 +1664,9 @@ function renderCoinCurrencyChips() {
   const row = document.getElementById('coin-currency-row');
   if (!row) return;
   row.innerHTML = FIAT_CURRENCIES.map(c => `
-    <div class="coin-currency-chip ${selectedCurrency === c.code ? 'selected' : ''}" onclick="selectCoinCurrency('${c.code}')">${c.code}</div>
+    <div class="coin-currency-chip ${selectedCurrency === c.code ? 'selected' : ''}" onclick="selectCoinCurrency('${c.code}')">
+      <span style="font-size:15px; margin-right:4px;">${c.flag}</span>${c.code}
+    </div>
   `).join('');
 }
 
