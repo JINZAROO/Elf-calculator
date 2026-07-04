@@ -938,6 +938,7 @@
   <button class="main-tab" onclick="setMainTab('coming1')">Trend</button>
   <button class="main-tab" onclick="setMainTab('blueprint')">Blueprint</button>
   <button class="main-tab" onclick="setMainTab('skins')">Skins</button>
+  <button class="main-tab" onclick="setMainTab('coin')">Exchange</button>
 </div>
 
 <!-- 실시간 탭 -->
@@ -1538,6 +1539,207 @@ function toggleSigilDesc() {
   </div>
 </div>
 </div>
+
+<!-- Coin 탭 -->
+<div class="page" id="page-coin">
+  <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif; margin-bottom:1rem; padding: 10px 14px; background:rgba(0,0,0,0.2); border:1px solid #8b6030; border-radius:8px;">
+    [Page Description] Convert between CiDi Coin, Pi Coin, Sigil, and real-world currencies using live exchange rates.<br>
+    [페이지설명] CiDi Coin, Pi Coin, Sigil, 그리고 각국 화폐 간의 실시간 환율 기준 변환 계산기입니다.
+  </div>
+
+  <div id="coin-price-info" style="font-size:12px; color:#a07040; font-family:'Inter',sans-serif; margin-bottom:1.2rem;">
+    Loading Pi Coin price...
+  </div>
+
+  <div class="chip-section-label">Select Currency (required)</div>
+  <div id="coin-currency-row" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1.5rem;"></div>
+
+  <!-- CiDi Coin 계산 -->
+  <div class="chart-panel" style="margin-bottom:1.5rem;">
+    <div style="font-size:14px; font-weight:700; color:#3d2510; margin-bottom:12px;">🪙 CiDi Coin → Pi Coin / Sigil / Currency</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+      <input type="number" class="sq-reward-input" id="coin-cidi-input" placeholder="0" style="width:160px;" />
+      <span style="font-size:13px; color:#7a4520; font-family:'Inter',sans-serif; font-weight:700;">CiDi Coin</span>
+      <button class="sq-calc-btn" onclick="calcFromCidi()">Calculate</button>
+    </div>
+    <div id="coin-cidi-error" style="display:none; color:#c0392b; font-size:12px; font-family:'Inter',sans-serif; margin-bottom:8px; font-weight:700;"></div>
+    <div id="coin-cidi-result" style="display:flex; flex-direction:column; gap:6px;"></div>
+  </div>
+
+  <!-- Pi Coin 계산 -->
+  <div class="chart-panel">
+    <div style="font-size:14px; font-weight:700; color:#3d2510; margin-bottom:12px;">◎ Pi Coin → CiDi Coin / Sigil / Currency</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+      <input type="number" class="sq-reward-input" id="coin-pi-input" placeholder="0" style="width:160px;" />
+      <span style="font-size:13px; color:#7a4520; font-family:'Inter',sans-serif; font-weight:700;">Pi Coin</span>
+      <button class="sq-calc-btn" onclick="calcFromPi()">Calculate</button>
+    </div>
+    <div id="coin-pi-error" style="display:none; color:#c0392b; font-size:12px; font-family:'Inter',sans-serif; margin-bottom:8px; font-weight:700;"></div>
+    <div id="coin-pi-result" style="display:flex; flex-direction:column; gap:6px;"></div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   Coin 탭 (CiDi Coin / Pi Coin / Sigil / 각국 화폐)
+   ════════════════════════════════════════════ */
+
+const PI_COINGECKO_ID = 'pi-network';
+const FOREX_API = 'https://open.er-api.com/v6/latest/USD';
+
+// 100 CiDiCoin ≈ $1 고정 페그 → 실시간 Pi 시세로 필요 Pi 수량 재계산
+const CIDI_USD_PEG = 0.01; // 1 CiDiCoin = $0.01
+
+// 1000 CiDiCoin = 아이템ID 15(Gem Gift Card) 1개의 최근 거래가(Sigil)
+const CIDI_SIGIL_ITEM_ID = 15;
+const CIDI_SIGIL_BASE_QTY = 1000;
+
+const FIAT_CURRENCIES = [
+  { code: 'USD', label: 'US Dollar' },
+  { code: 'KRW', label: 'Korean Won' },
+  { code: 'JPY', label: 'Japanese Yen' },
+  { code: 'CNY', label: 'Chinese Yuan' },
+  { code: 'EUR', label: 'Euro' },
+  { code: 'VND', label: 'Vietnamese Dong' },
+  { code: 'TWD', label: 'Taiwan Dollar' },
+  { code: 'PHP', label: 'Philippine Peso' },
+  { code: 'SGD', label: 'Singapore Dollar' },
+];
+
+let piPriceUSD = null;
+let forexRates = null;
+let selectedCurrency = null;
+
+function renderCoinCurrencyChips() {
+  const row = document.getElementById('coin-currency-row');
+  if (!row) return;
+  row.innerHTML = FIAT_CURRENCIES.map(c => `
+    <div class="coin-currency-chip ${selectedCurrency === c.code ? 'selected' : ''}" onclick="selectCoinCurrency('${c.code}')">${c.code}</div>
+  `).join('');
+}
+
+function selectCoinCurrency(code) {
+  selectedCurrency = code;
+  renderCoinCurrencyChips();
+}
+
+function updateCoinPriceInfo() {
+  const el = document.getElementById('coin-price-info');
+  if (!el) return;
+  el.textContent = piPriceUSD != null
+    ? `Pi Coin: $${piPriceUSD.toFixed(6)} USD (source: CoinGecko)`
+    : 'Failed to load Pi Coin price.';
+}
+
+async function fetchPiPrice() {
+  try {
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${PI_COINGECKO_ID}&vs_currencies=usd`);
+    const data = await res.json();
+    piPriceUSD = data?.[PI_COINGECKO_ID]?.usd ?? null;
+  } catch(e) {
+    console.warn('Pi Coin 가격 로드 실패:', e.message);
+    piPriceUSD = null;
+  }
+  updateCoinPriceInfo();
+}
+
+async function fetchForexRates() {
+  try {
+    const res = await fetch(FOREX_API);
+    const data = await res.json();
+    forexRates = data.rates || null;
+  } catch(e) {
+    console.warn('환율 정보 로드 실패:', e.message);
+    forexRates = null;
+  }
+}
+
+renderCoinCurrencyChips();
+fetchPiPrice();
+fetchForexRates();
+
+function getCidiSigilRate() {
+  if (typeof prices === 'undefined' || prices[CIDI_SIGIL_ITEM_ID] == null) return null;
+  return prices[CIDI_SIGIL_ITEM_ID] / CIDI_SIGIL_BASE_QTY; // 1 CiDiCoin당 Sigil 수량
+}
+
+function formatCurrencyValue(usdValue) {
+  if (!selectedCurrency || forexRates == null) return null;
+  if (selectedCurrency === 'USD') return usdValue;
+  const rate = forexRates[selectedCurrency];
+  return rate != null ? usdValue * rate : null;
+}
+
+function calcFromCidi() {
+  const errorEl = document.getElementById('coin-cidi-error');
+  const resultEl = document.getElementById('coin-cidi-result');
+
+  if (!selectedCurrency) {
+    errorEl.textContent = 'Please select a currency unit.';
+    errorEl.style.display = 'block';
+    resultEl.innerHTML = '';
+    return;
+  }
+  errorEl.style.display = 'none';
+
+  const cidiAmount = parseFloat(document.getElementById('coin-cidi-input').value);
+  if (isNaN(cidiAmount) || cidiAmount <= 0) {
+    resultEl.innerHTML = '<div class="coin-result-row"><span class="coin-result-label">Please enter a CiDi Coin amount.</span></div>';
+    return;
+  }
+  if (piPriceUSD == null || forexRates == null) {
+    resultEl.innerHTML = '<div class="coin-result-row"><span class="coin-result-label">Loading exchange rates...</span></div>';
+    return;
+  }
+
+  const usdValue = cidiAmount * CIDI_USD_PEG;
+  const piNeeded = usdValue / piPriceUSD;
+  const sigilRate = getCidiSigilRate();
+  const sigilNeeded = sigilRate != null ? cidiAmount * sigilRate : null;
+  const fiatValue = formatCurrencyValue(usdValue);
+
+  resultEl.innerHTML = `
+    <div class="coin-result-row"><span class="coin-result-label">Required Pi Coin</span><span class="coin-result-value">${piNeeded.toFixed(8)} π</span></div>
+    <div class="coin-result-row"><span class="coin-result-label">Equivalent Sigil (market rate)</span><span class="coin-result-value">${sigilNeeded != null ? sigilNeeded.toFixed(4) + ' Sigil' : 'Loading...'}</span></div>
+    <div class="coin-result-row"><span class="coin-result-label">Value in ${selectedCurrency}</span><span class="coin-result-value">${fiatValue != null ? fiatValue.toLocaleString(undefined,{maximumFractionDigits:4}) + ' ' + selectedCurrency : '···'}</span></div>
+  `;
+}
+
+function calcFromPi() {
+  const errorEl = document.getElementById('coin-pi-error');
+  const resultEl = document.getElementById('coin-pi-result');
+
+  if (!selectedCurrency) {
+    errorEl.textContent = 'Please select a currency unit.';
+    errorEl.style.display = 'block';
+    resultEl.innerHTML = '';
+    return;
+  }
+  errorEl.style.display = 'none';
+
+  const piAmount = parseFloat(document.getElementById('coin-pi-input').value);
+  if (isNaN(piAmount) || piAmount <= 0) {
+    resultEl.innerHTML = '<div class="coin-result-row"><span class="coin-result-label">Please enter a Pi Coin amount.</span></div>';
+    return;
+  }
+  if (piPriceUSD == null || forexRates == null) {
+    resultEl.innerHTML = '<div class="coin-result-row"><span class="coin-result-label">Loading exchange rates...</span></div>';
+    return;
+  }
+
+  const usdValue = piAmount * piPriceUSD;
+  const cidiEquivalent = usdValue / CIDI_USD_PEG;
+  const sigilRate = getCidiSigilRate();
+  const sigilEquivalent = sigilRate != null ? cidiEquivalent * sigilRate : null;
+  const fiatValue = formatCurrencyValue(usdValue);
+
+  resultEl.innerHTML = `
+    <div class="coin-result-row"><span class="coin-result-label">Equivalent CiDi Coin</span><span class="coin-result-value">${cidiEquivalent.toFixed(4)} CiDi</span></div>
+    <div class="coin-result-row"><span class="coin-result-label">Equivalent Sigil (market rate)</span><span class="coin-result-value">${sigilEquivalent != null ? sigilEquivalent.toFixed(4) + ' Sigil' : 'Loading...'}</span></div>
+    <div class="coin-result-row"><span class="coin-result-label">Value in ${selectedCurrency}</span><span class="coin-result-value">${fiatValue != null ? fiatValue.toLocaleString(undefined,{maximumFractionDigits:4}) + ' ' + selectedCurrency : '···'}</span></div>
+  `;
+}
+</script>
  
 <!-- Notification 탭 -->
 <div class="page" id="page-coming2">
