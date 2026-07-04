@@ -882,6 +882,20 @@
 .notif-bell:hover { border-color: #f0c060; background: rgba(240,192,96,0.25); }
 .notif-bell.active { border-color: #f0c060; background: rgba(240,192,96,0.3); }
 
+.site-footer {
+  text-align: center;
+  padding: 24px 1rem 32px;
+  font-family: 'Inter', sans-serif;
+}
+.footer-link {
+  font-size: 12px;
+  color: #a07040;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.footer-link:hover { color: #f0c060; }     
 .notif-badge {
   position: absolute;
   top: -2px; right: -2px;
@@ -891,6 +905,7 @@
   border: 2px solid #3d2510;
   display: none;
 }
+     
 .notif-bell.has-unread .notif-badge { display: block; }
    </style>
 </head>
@@ -923,7 +938,6 @@
   <button class="main-tab" onclick="setMainTab('coming1')">Trend</button>
   <button class="main-tab" onclick="setMainTab('blueprint')">Blueprint</button>
   <button class="main-tab" onclick="setMainTab('skins')">Skins</button>
-  <button class="main-tab" onclick="setMainTab('privacy')">Privacy Policy</button>
 </div>
 
 <!-- 실시간 탭 -->
@@ -1645,6 +1659,10 @@ function toggleSigilDesc() {
   </div>
 </div>
 
+<footer class="site-footer">
+  <span class="footer-link" onclick="setMainTab('privacy')">Privacy Policy</span>
+</footer>
+     
 <script>
 const API_BASE = 'https://elf-market-api.vercel.app';
 
@@ -1792,7 +1810,7 @@ let accessToken = '';
 
 function setMainTab(tab) {
   document.querySelectorAll('.main-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','skins','privacy'][i] === tab);
+    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','skins'][i] === tab);
   });
   document.getElementById('notif-bell')?.classList.toggle('active', tab === 'coming2');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
