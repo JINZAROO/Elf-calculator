@@ -1369,7 +1369,7 @@ function calcAll() {
 // quests.json 로드
 async function loadQuestFoods() {
   try {
-    const res = await fetch('quests.json', { cache: 'no-store' });
+    const res = await fetch(`${API_BASE}/api/data?name=quests`, { cache: 'no-store' });
     const raw = await res.json();
     sqFoods = raw.map(q => ({
       id: q.id,
@@ -2452,7 +2452,7 @@ renderChipGrid();
 async function loadNotifications() {
   const listEl = document.getElementById('notif-list');
   try {
-    const res = await fetch('notifications.json', { cache: 'no-store' });
+    const res = await fetch(`${API_BASE}/api/data?name=notifications`, { cache: 'no-store' });
     if (!res.ok) throw new Error('불러올 수 없습니다 (' + res.status + ')');
     const notifications = await res.json();
 
@@ -2499,7 +2499,7 @@ let bpData = [];
 
 async function loadBlueprints() {
   try {
-    const res = await fetch('blueprints.json', { cache: 'no-store' });
+    const res = await  fetch(`${API_BASE}/api/data?name=blueprints`, { cache: 'no-store' });
     bpData = await res.json();
   } catch(e) {
     console.warn('blueprints.json 로드 실패:', e.message);
@@ -2647,7 +2647,7 @@ let skinsInfoData = [];
 
 async function loadSkinsInfo() {
   try {
-    const res = await fetch('skins-info.json', { cache: 'no-store' });
+    const res = await fetch(`${API_BASE}/api/data?name=skins-info`, { cache: 'no-store' });
     skinsInfoData = await res.json();
   } catch(e) {
     console.warn('skins-info.json 로드 실패:', e.message);
