@@ -1,0 +1,12 @@
+{
+  "name": "Elf Market Tracker",
+  "short_name": "Elf Tracker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2b1d0e",
+  "theme_color": "#3d2510",
+  "icons": [
+    { "src": "images/EMT.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "images/EMT.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
