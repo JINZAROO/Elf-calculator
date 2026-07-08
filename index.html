@@ -101,7 +101,15 @@
     display: flex;
     background: linear-gradient(180deg, #3d2510 0%, #2e1c0c 100%);
     border-bottom: 2px solid #c8922a;
-    padding: 0 2rem;
+    padding: 0 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .main-tabs::-webkit-scrollbar { display: none; }
+
+  @media (max-width: 480px) {
+    .main-tab { padding: 10px 14px; font-size: 12px; }
   }
 
   .main-tab {
@@ -117,6 +125,7 @@
     margin-bottom: -2px;
     transition: all 0.15s;
     letter-spacing: 0.02em;
+    flex-shrink: 0;
   }
 
   .main-tab:hover { color: #f0c060; }
@@ -176,6 +185,13 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
     gap: 14px;
+  }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+    .card { padding: 0.7rem; }
+    .card-img { width: 56px; height: 56px; }
+    .page { padding: 1rem; }
   }
 
   .card {
@@ -278,6 +294,12 @@
   @keyframes shimmer {
     0%, 100% { opacity: 0.5; }
     50% { opacity: 1; }
+  }
+
+  @media (max-width: 560px) {
+    .logo { position: static; left: auto; top: auto; transform: none; }
+    .status-bar { display: none; }
+    h1 { font-size: 15px; }
   }
 
   /* ── 컨트롤 ── */
