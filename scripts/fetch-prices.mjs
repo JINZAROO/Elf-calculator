@@ -130,7 +130,10 @@ const ITEMS = [
 ];
 
 async function getAccessToken() {
-  const res = await fetch(`${API_BASE}/api/refresh`, { method: 'POST' });
+  const res = await fetch(`${API_BASE}/api/refresh`, {
+    method: 'POST',
+    headers: { 'x-cron-secret': process.env.CRON_SECRET }
+  });
   const data = await res.json();
   if (data.code !== 0) throw new Error('토큰 갱신 실패: ' + data.message);
   return 'Bearer ' + data.data.accessToken;
