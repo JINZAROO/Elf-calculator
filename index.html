@@ -32,7 +32,6 @@
 
   /* ── 고정 헤더 ── */
   .topbar {
-    justify-content: center;
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 100;
@@ -44,6 +43,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+  .topbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .logo {
@@ -1047,11 +1051,15 @@ const API_BASE = 'https://elf-market-api.vercel.app';
     <span id="status-text">Loading...</span>
   </div>
 
-  <div class="notif-bell" id="notif-bell" onclick="openNotifications()">
-    🔔
-    <span class="notif-badge" id="notif-badge"></span>
+  <div class="topbar-icons">
+    <div class="notif-bell" id="donate-bell" onclick="openDonatePopup()">
+      🎁
+    </div>
+    <div class="notif-bell" id="notif-bell" onclick="openNotifications()">
+      🔔
+      <span class="notif-badge" id="notif-badge"></span>
+    </div>
   </div>
-     
 </div>
 
 <!-- 큰 탭 -->
@@ -2880,6 +2888,33 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js').catch(e => console.warn('SW 등록 실패:', e.message));
   });
 }
+
+/* ════════════════════════════════════════════
+   후원 팝업 (Support / Donation)
+   ════════════════════════════════════════════ */
+
+function openDonatePopup() {
+  document.getElementById('donate-popup').style.display = 'flex';
+}
+
+function closeDonatePopup() {
+  document.getElementById('donate-popup').style.display = 'none';
+}
+
+function closeDonatePopupOutside(e) {
+  if (e.target === document.getElementById('donate-popup')) closeDonatePopup();
+}
+
+function copyDonateCode() {
+  const code = document.getElementById('donate-code').textContent;
+  const btn = document.getElementById('donate-copy-btn');
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'Copied! ✅';
+    setTimeout(() => { btn.textContent = 'Copy Code'; }, 1500);
+  }).catch(() => {
+    btn.textContent = 'Copy failed — select manually';
+  });
+}
      
 </script>
      <footer class="site-footer">
@@ -2900,5 +2935,23 @@ if ('serviceWorker' in navigator) {
     <button onclick="closeIosPopup()" style="margin-top:14px; background:linear-gradient(135deg,#c8922a,#a07030); color:#fff8e8; border:none; border-radius:8px; padding:8px 20px; font-weight:700; cursor:pointer;">Got it</button>
   </div>
 </div>
+<div class="sq-popup-overlay" id="donate-popup" style="display:none;" onclick="closeDonatePopupOutside(event)">
+  <div class="sq-popup" style="max-width:400px; text-align:center;">
+    <div class="sq-popup-header">
+      <span class="sq-popup-title">🎁 Support the Site</span>
+      <button class="sq-popup-close" onclick="closeDonatePopup()">✕</button>
+    </div>
+    <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif; line-height:1.7; margin-bottom:16px;">
+      This site is run by a solo fan, in my spare time.<br>
+      If it's been helpful, an in-game gift is always appreciated — but never required! 🙏
+    </div>
+    <div style="background:rgba(240,192,96,0.12); border:1.5px solid #c8922a; border-radius:10px; padding:14px; margin-bottom:12px;">
+      <div style="font-size:11px; color:#a07040; font-family:'Inter',sans-serif; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Transfer Code</div>
+      <div id="donate-code" style="font-size:22px; font-weight:700; color:#f0c060; font-family:'Inter',sans-serif; letter-spacing:0.05em;">RCXMTXSL5V</div>
+    </div>
+    <button onclick="copyDonateCode()" id="donate-copy-btn" style="width:100%; background:linear-gradient(135deg,#c8922a,#a07030); color:#fff8e8; border:none; border-radius:8px; padding:10px; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer;">Copy Code</button>
+  </div>
+</div>
+
 </body>
 </html>
