@@ -2328,9 +2328,6 @@ function renderCards() {
 
 renderCards();
 loadAll();
-if (!sessionStorage.getItem('noticeDismissed')) {  // ← 여기로 이동
-  openNoticePopup();
-}
 
 /* ════════════════════════════════════════════
    추가예정1: 시세 추이 (가격 변동 그래프) 탭
@@ -2840,6 +2837,10 @@ setMainTab = function(tab) {
     loadPricesFor([{ id: CIDI_SIGIL_ITEM_ID }]);
   }
 };
+
+ if (!sessionStorage.getItem('noticeDismissed')) {
+  openNoticePopup();
+}
 
 /* ════════════════════════════════════════════
    홈 화면에 추가 (PWA Install)
