@@ -2838,10 +2838,6 @@ setMainTab = function(tab) {
   }
 };
 
- if (!sessionStorage.getItem('noticeDismissed')) {
-  openNoticePopup();
-}
-
 /* ════════════════════════════════════════════
    홈 화면에 추가 (PWA Install)
    ════════════════════════════════════════════ */
@@ -2937,6 +2933,10 @@ function closeNoticePopup() {
 }
 function closeNoticePopupOutside(e) {
   if (e.target === document.getElementById('notice-popup')) closeNoticePopup();
+}
+
+if (!sessionStorage.getItem('noticeDismissed')) {
+  openNoticePopup();
 }
 
 
