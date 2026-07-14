@@ -2328,7 +2328,9 @@ function renderCards() {
 
 renderCards();
 loadAll();
-showMaintenancePopup(); 
+if (!sessionStorage.getItem('noticeDismissed')) {  // ← 여기로 이동
+  openNoticePopup();
+}
 
 /* ════════════════════════════════════════════
    추가예정1: 시세 추이 (가격 변동 그래프) 탭
@@ -2936,10 +2938,7 @@ function closeNoticePopupOutside(e) {
   if (e.target === document.getElementById('notice-popup')) closeNoticePopup();
 }
 
-// 이번 브라우저 세션에서 아직 안 닫았으면 접속 시 자동으로 띄움
-if (!sessionStorage.getItem('noticeDismissed')) {
-  openNoticePopup();
-}
+
      
 </script>
      <footer class="site-footer">
