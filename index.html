@@ -2935,9 +2935,11 @@ function closeNoticePopupOutside(e) {
   if (e.target === document.getElementById('notice-popup')) closeNoticePopup();
 }
 
-if (!sessionStorage.getItem('noticeDismissed')) {
-  openNoticePopup();
-}
+window.addEventListener('DOMContentLoaded', function() {
+  if (!sessionStorage.getItem('noticeDismissed')) {
+    openNoticePopup();
+  }
+});
 
 
      
