@@ -2919,6 +2919,26 @@ function copyDonateCode() {
     btn.textContent = 'Copy failed — select manually';
   });
 }
+
+/* ════════════════════════════════════════════
+   접속 시 공지 팝업 (Data Sync Notice)
+   ════════════════════════════════════════════ */
+
+function openNoticePopup() {
+  document.getElementById('notice-popup').style.display = 'flex';
+}
+function closeNoticePopup() {
+  document.getElementById('notice-popup').style.display = 'none';
+  sessionStorage.setItem('noticeDismissed', '1');
+}
+function closeNoticePopupOutside(e) {
+  if (e.target === document.getElementById('notice-popup')) closeNoticePopup();
+}
+
+// 이번 브라우저 세션에서 아직 안 닫았으면 접속 시 자동으로 띄움
+if (!sessionStorage.getItem('noticeDismissed')) {
+  openNoticePopup();
+}
      
 </script>
      <footer class="site-footer">
@@ -2956,6 +2976,31 @@ function copyDonateCode() {
     <button onclick="copyDonateCode()" id="donate-copy-btn" style="width:100%; background:linear-gradient(135deg,#c8922a,#a07030); color:#fff8e8; border:none; border-radius:8px; padding:10px; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer;">Copy Code</button>
   </div>
 </div>
+<div class="sq-popup-overlay" id="notice-popup" style="display:none;" onclick="closeNoticePopupOutside(event)">
+  <div class="sq-popup" style="max-width:480px;">
+    <div class="sq-popup-header">
+      <span class="sq-popup-title">⚠️ Data Sync Notice / 데이터 연동 불가 안내</span>
+      <button class="sq-popup-close" onclick="closeNoticePopup()">✕</button>
+    </div>
 
+    <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif; line-height:1.7; margin-bottom:16px;">
+      <strong style="color:#f0c060;">[English]</strong><br>
+      The route used to fetch Elf Continent game data (market data) is currently blocked, so real-time price sync is not working.<br><br>
+      We have formally requested CiDi Games to issue an official data access code for developers. As soon as this is resolved, we will announce it on our X (Twitter) account.<br><br>
+      We apologize for the inconvenience.
+    </div>
+
+    <div style="height:1px; background:linear-gradient(90deg, transparent, #8b6030, transparent); margin:16px 0;"></div>
+
+    <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif; line-height:1.7; margin-bottom:16px;">
+      <strong style="color:#f0c060;">[한국어]</strong><br>
+      현재 엘프대륙 게임데이터(마켓데이터)를 불러오는 경로가 차단되어 실시간 가격연동이 되지 않고 있습니다.<br><br>
+      이에따라 CiDiGames 측에 정식으로 개발자를 위한 데이터 연동 코드를 발행해달라고 요청해놓은 상황이며, 완료되는 즉시 제 X계정(@gugiab)에 공지해드리겠습니다.<br><br>
+      불편을 드려 죄송합니다.
+    </div>
+
+    <button onclick="closeNoticePopup()" style="width:100%; background:linear-gradient(135deg,#c8922a,#a07030); color:#fff8e8; border:none; border-radius:8px; padding:10px; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer;">Close / 닫기</button>
+  </div>
+</div>
 </body>
 </html>
