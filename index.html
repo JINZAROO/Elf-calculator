@@ -1970,15 +1970,25 @@ function renderGiftCodes() {
     return;
   }
 
-  list.innerHTML = filtered.map(item => `
+  list.innerHTML = filtered.map((item, i) => `
     <div style="display:flex; justify-content:space-between; align-items:center; background:linear-gradient(160deg,#f5e8cc 0%,#e8d5aa 100%); border:2px solid #c8922a; border-radius:10px; padding:12px 18px; box-shadow:0 2px 8px rgba(0,0,0,0.25);">
       <span style="font-size:15px; font-weight:700; color:#3d2510; font-family:'Noto Serif KR',serif;">${item.nickname}</span>
       <div style="display:flex; align-items:center; gap:10px;">
         <span style="font-size:16px; font-weight:800; color:#7a3e00; font-family:'Inter',sans-serif; letter-spacing:0.08em;">${item.code}</span>
-        <button onclick="navigator.clipboard.writeText('${item.code}')" style="background:linear-gradient(135deg,#c8922a,#a07030); color:#fff8e8; border:none; border-radius:6px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer;">Copy</button>
+        <button id="giftcode-copy-${i}" onclick="copyGiftCode('${item.code}', ${i})" style="background:linear-gradient(135deg,#c8922a,#a07030); color:#fff8e8; border:none; border-radius:6px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer;">Copy</button>
       </div>
     </div>
   `).join('');
+}
+
+function copyGiftCode(code, index) {
+  const btn = document.getElementById(`giftcode-copy-${index}`);
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'Copied! ✅';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+  }).catch(() => {
+    btn.textContent = 'Failed';
+  });
 }
 </script>
  
