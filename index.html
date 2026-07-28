@@ -2271,7 +2271,7 @@ let accessToken = '';
 
 function setMainTab(tab) {
   document.querySelectorAll('.main-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','skins','giftcode'][i] === tab);
+    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','skins','exchange','giftcode'][i] === tab);
   });
   document.getElementById('notif-bell')?.classList.toggle('active', tab === 'coming2');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
