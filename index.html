@@ -1074,6 +1074,7 @@ const API_BASE = 'https://elf-market-api.vercel.app';
   <button class="main-tab" onclick="setMainTab('blueprint')">Blueprint</button>
   <button class="main-tab" onclick="setMainTab('skins')">Skins</button>
   <button class="main-tab" onclick="setMainTab('coin')">Exchange</button>
+  <button class="main-tab" onclick="setMainTab('giftcode')">Gift Code</button>
 </div>
 
 <!-- 실시간 탭 -->
@@ -1939,6 +1940,46 @@ function calcFromSigil() {
     <div class="coin-result-row"><span class="coin-result-label">Value in ${selectedCurrency}</span><span class="coin-result-value">${fiatValue != null ? fiatValue.toLocaleString(undefined,{maximumFractionDigits:4}) + ' ' + selectedCurrency : '···'}</span></div>
   `;
 }
+
+/* ════════════════════════════════════════════
+   Gift Code 탭
+   ════════════════════════════════════════════ */
+
+let giftCodesData = [];
+
+async function loadGiftCodes() {
+  try {
+    const res = await fetch('https://raw.githubusercontent.com/JINZAROO/Elf-calculator/main/data/gift-codes.json', { cache: 'no-store' });
+    giftCodesData = await res.json();
+    renderGiftCodes();
+  } catch(e) {
+    document.getElementById('giftcode-list').innerHTML = '<div class="empty">Failed to load gift codes.</div>';
+  }
+}
+
+function renderGiftCodes() {
+  const list = document.getElementById('giftcode-list');
+  const search = document.getElementById('giftcode-search')?.value.toLowerCase() || '';
+
+  const filtered = giftCodesData.filter(item =>
+    !search || item.nickname.toLowerCase().includes(search)
+  );
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty">No results found.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(item => `
+    <div style="display:flex; justify-content:space-between; align-items:center; background:linear-gradient(160deg,#f5e8cc 0%,#e8d5aa 100%); border:2px solid #c8922a; border-radius:10px; padding:12px 18px; box-shadow:0 2px 8px rgba(0,0,0,0.25);">
+      <span style="font-size:15px; font-weight:700; color:#3d2510; font-family:'Noto Serif KR',serif;">${item.nickname}</span>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:16px; font-weight:800; color:#7a3e00; font-family:'Inter',sans-serif; letter-spacing:0.08em;">${item.code}</span>
+        <button onclick="navigator.clipboard.writeText('${item.code}')" style="background:linear-gradient(135deg,#c8922a,#a07030); color:#fff8e8; border:none; border-radius:6px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer;">Copy</button>
+      </div>
+    </div>
+  `).join('');
+}
 </script>
  
 <!-- Notification 탭 -->
@@ -1952,6 +1993,17 @@ function calcFromSigil() {
   </div>
 </div>
 
+<div class="page" id="page-giftcode">
+  <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif; margin-bottom:1rem; padding:10px 14px; background:rgba(0,0,0,0.2); border:1px solid #8b6030; border-radius:8px;">
+    [Page Description] Enter your nickname to find your gift code.<br>
+    [페이지 설명] 닉네임으로 검색하여 선물 코드를 확인하세요.
+  </div>
+  <div class="controls">
+    <input class="search" type="text" id="giftcode-search" placeholder="Nickname Search..." oninput="renderGiftCodes()" />
+  </div>
+  <div id="giftcode-list" style="display:flex; flex-direction:column; gap:8px; margin-top:8px;"></div>
+</div>
+     
 <!-- Privacy Policy 탭 -->
 <div class="page" id="page-privacy">
   <div class="chart-panel" style="margin-bottom: 1.5rem;">
@@ -2209,7 +2261,7 @@ let accessToken = '';
 
 function setMainTab(tab) {
   document.querySelectorAll('.main-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','skins'][i] === tab);
+    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','skins','giftcode'][i] === tab);
   });
   document.getElementById('notif-bell')?.classList.toggle('active', tab === 'coming2');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -2827,14 +2879,16 @@ let skinsLoaded = false;
 const origSetMainTab = setMainTab;
 // setMainTab 확장: skins 탭 진입 시 자동 로드, Exchange 탭 진입 시 아이템ID 15 시세 우선 로드
 const _setMainTab = setMainTab;
+let giftCodeLoaded = false;
 setMainTab = function(tab) {
   _setMainTab(tab);
   if (tab === 'skins' && !skinsLoaded) {
     skinsLoaded = true;
     loadSkins();
   }
-  if (tab === 'coin' && accessToken) {
-    loadPricesFor([{ id: CIDI_SIGIL_ITEM_ID }]);
+  if (tab === 'giftcode' && !giftCodeLoaded) {
+    giftCodeLoaded = true;
+    loadGiftCodes();
   }
 };
 
