@@ -2393,7 +2393,7 @@ let accessToken = '';
 
 function setMainTab(tab) {
   document.querySelectorAll('.main-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','skins','coin','giftcode'][i] === tab);
+    t.classList.toggle('active', ['realtime','sigil','coming1','blueprint','skins','coin','giftcode','pitracker'][i] === tab);
   });
   document.getElementById('notif-bell')?.classList.toggle('active', tab === 'coming2');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3022,6 +3022,11 @@ setMainTab = function(tab) {
     giftCodeLoaded = true;
     loadGiftCodes();
   }
+
+  if(tab==="pitracker" && !piLoaded){
+        piLoaded=true;
+        fetchPiTrackerData();
+    }
 };
 
 /* ════════════════════════════════════════════
@@ -3126,18 +3131,6 @@ window.addEventListener('DOMContentLoaded', function() {
     openNoticePopup();
   }
 });
-
-// ── 탭 전환 함수 ──
-  function setMainTab(tabId) {
-    document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-
-    event.currentTarget.classList.add('active');
-    const targetPage = document.getElementById('page-' + tabId);
-    if (targetPage) {
-      targetPage.classList.add('active');
-    }
-  }
 
   // ── Pi Tracker 데이터 로직 ──
   let piWalletsExpanded = false;
