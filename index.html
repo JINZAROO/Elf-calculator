@@ -1035,6 +1035,79 @@
      #skin-detail-popup .sq-ing-name { color: #f5e8cc; }
 #skin-detail-popup .sq-ing-qty { color: #f0c060; }
 #skin-detail-popup .sq-ing-price { color: #fff8e8; }
+
+     /* ── Pi Tracker Styles ── */
+  .pi-summary-card {
+    background: linear-gradient(160deg, #f5e8cc 0%, #e8d5aa 100%);
+    border: 2px solid #c8922a;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  }
+  .pi-summary-title { font-size: 12px; color: #a07040; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .pi-summary-value { font-size: 28px; font-weight: 700; color: #7a3e00; font-family: 'Inter', sans-serif; }
+
+  .pi-section-title { font-size: 15px; font-weight: 700; color: #f0c060; margin-bottom: 10px; font-family: 'Inter', sans-serif; }
+
+  .pi-table-wrap {
+    background: linear-gradient(160deg, #f5e8cc 0%, #e8d5aa 100%);
+    border: 2px solid #c8922a;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  }
+  .pi-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+  }
+  .pi-table th {
+    background: #3d2510;
+    color: #f0c060;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 12px;
+  }
+  .pi-table td {
+    padding: 10px 12px;
+    color: #3d2510;
+    border-bottom: 1px solid rgba(200,146,42,0.3);
+  }
+  .pi-table tr:last-child td { border-bottom: none; }
+  .pi-wallet-address {
+    font-family: monospace;
+    font-size: 12px;
+    color: #7a3e00;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .pi-expand-btn-wrap {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .pi-expand-btn {
+    background: linear-gradient(135deg, #c8922a, #a07030);
+    color: #fff8e8;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    transition: all 0.15s;
+  }
+  .pi-expand-btn:hover { background: linear-gradient(135deg, #f0c060, #c8922a); }
    </style>
 </head>
 <body>
@@ -1075,6 +1148,7 @@ const API_BASE = 'https://elf-market-api.vercel.app';
   <button class="main-tab" onclick="setMainTab('skins')">Skins</button>
   <button class="main-tab" onclick="setMainTab('coin')">Exchange</button>
   <button class="main-tab" onclick="setMainTab('giftcode')">Gift Code</button>
+  <button class="main-tab" onclick="setMainTab('pitracker')">Pi Tracker</button>
 </div>
 
 <!-- 실시간 탭 -->
@@ -1990,6 +2064,53 @@ function copyGiftCode(code, index) {
     btn.textContent = 'Failed';
   });
 }
+
+     <!-- Pi Tracker 탭 -->
+<div class="page" id="page-pitracker">
+  <div style="font-size:13px; color:#c8a06a; font-family:'Inter',sans-serif; margin-bottom:1rem; padding: 10px 14px; background:rgba(0,0,0,0.2); border:1px solid #8b6030; border-radius:8px;">
+    [Page Description] Automatically tracks and analyzes deposits made to mainnet wallet <span style="font-family:monospace; color:#f0c060;">GBVKJKURNRBQ2M2KFOFZSDFM5D3NUMYHRTFXZXUS5AVRVYLTUWZNDCH5</span> every 5 minutes.
+  </div>
+
+  <!-- 총 입금 Pi 최상위에 숫자 표시 -->
+  <div class="pi-summary-card">
+    <div class="pi-summary-title">Total Deposited Pi</div>
+    <div class="pi-summary-value" id="pi-total-deposits">Loading...</div>
+  </div>
+
+  <!-- 일별 입금 Pi 선형차트 -->
+  <div class="pi-section-title">Daily Deposited Pi Trend</div>
+  <div class="chart-panel" style="margin-bottom: 2rem;">
+    <div class="chart-canvas-wrap">
+      <svg class="price-svg" id="pi-daily-chart" viewBox="0 0 600 250" preserveAspectRatio="none">
+        <g id="pi-chart-grid"></g>
+        <path class="fill-path" id="pi-chart-fill" d="" />
+        <path class="line-path" id="pi-chart-line" d="" />
+        <g id="pi-chart-dots"></g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Top 100 지갑주소와 Pi수량 -->
+  <div class="pi-section-title">Top Depositor Wallets</div>
+  <div class="pi-table-wrap">
+    <table class="pi-table">
+      <thead>
+        <tr>
+          <th style="width: 60px;">Rank</th>
+          <th>Wallet Address</th>
+          <th style="text-align: right;">Deposited Pi</th>
+        </tr>
+      </thead>
+      <tbody id="pi-top-wallets-tbody">
+        <tr><td colspan="3" style="text-align: center; padding: 2rem; color: #a07040;">Loading wallet data...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pi-expand-btn-wrap" id="pi-expand-wrap" style="display: none;">
+    <button class="pi-expand-btn" id="pi-expand-btn" onclick="togglePiWallets()">Expand More (Top 100)</button>
+  </div>
+</div>
 </script>
  
 <!-- Notification 탭 -->
@@ -3005,7 +3126,107 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+// ── 탭 전환 함수 ──
+  function setMainTab(tabId) {
+    document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
 
+    event.currentTarget.classList.add('active');
+    const targetPage = document.getElementById('page-' + tabId);
+    if (targetPage) {
+      targetPage.classList.add('active');
+    }
+  }
+
+  // ── Pi Tracker 데이터 로직 ──
+  let piWalletsExpanded = false;
+  let allPiWalletsData = [];
+
+  function fetchPiTrackerData() {
+    // 실제 블록탐색기 API 또는 백엔드 연동 부위
+    setTimeout(() => {
+      // 총 입금 Pi 예시 값
+      document.getElementById('pi-total-deposits').textContent = '1,245,892.4500 Pi';
+
+      // Top 100 데이터 생성 (시뮬레이션)
+      allPiWalletsData = [];
+      for (let i = 1; i <= 100; i++) {
+        allPiWalletsData.push({
+          rank: i,
+          address: 'GBVKJKURNRBQ2M2KFOFZSDFM5D3NUMYHRTFXZXUS5AVRVYLTUWZNDCH' + (1000 + i),
+          amount: (150000 / i).toFixed(4) + ' Pi'
+        });
+      }
+
+      renderPiWalletsTable();
+      renderPiDailyChart();
+    }, 500);
+  }
+
+  function renderPiWalletsTable() {
+    const tbody = document.getElementById('pi-top-wallets-tbody');
+    const displayLimit = piWalletsExpanded ? 100 : 10;
+    const itemsToDisplay = allPiWalletsData.slice(0, displayLimit);
+
+    tbody.innerHTML = itemsToDisplay.map(w => `
+      <tr>
+        <td style="font-weight: 700; color: #7a3e00;">#${w.rank}</td>
+        <td><span class="pi-wallet-address" title="${w.address}">${w.address}</span></td>
+        <td style="text-align: right; font-weight: 700; color: #7a3e00;">${w.amount}</td>
+      </tr>
+    `).join('');
+
+    const expandWrap = document.getElementById('pi-expand-wrap');
+    if (allPiWalletsData.length > 10) {
+      expandWrap.style.display = 'block';
+      document.getElementById('pi-expand-btn').textContent = piWalletsExpanded ? 'Collapse' : 'Expand More (Top 100)';
+    }
+  }
+
+  function togglePiWallets() {
+    piWalletsExpanded = !piWalletsExpanded;
+    renderPiWalletsTable();
+  }
+
+  function renderPiDailyChart() {
+    const linePath = document.getElementById('pi-chart-line');
+    const fillPath = document.getElementById('pi-chart-fill');
+    const dotsG = document.getElementById('pi-chart-dots');
+
+    const dataPoints = [12000, 19000, 15000, 28000, 22000, 34000, 41000];
+    const maxVal = Math.max(...dataPoints) * 1.1;
+    const width = 600;
+    const height = 250;
+    const padding = 40;
+
+    let points = [];
+    dataPoints.forEach((val, idx) => {
+      const x = padding + (idx / (dataPoints.length - 1)) * (width - padding * 2);
+      const y = height - padding - (val / maxVal) * (height - padding * 2);
+      points.push({x, y, val});
+    });
+
+    let pathStr = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+      pathStr += ` L ${points[i].x} ${points[i].y}`;
+    }
+    linePath.setAttribute('d', pathStr);
+
+    let fillStr = `${pathStr} L ${points[points.length-1].x} ${height - padding} L ${points[0].x} ${height - padding} Z`;
+    fillPath.setAttribute('d', fillStr);
+
+    dotsG.innerHTML = points.map(p => `
+      <circle class="data-dot" cx="${p.x}" cy="${p.y}" r="3.5"></circle>
+    `).join('');
+  }
+
+  // 5분(300,000ms)마다 실시간 데이터 갱신 타이머 실행
+  setInterval(fetchPiTrackerData, 300000);
+  
+  // 페이지 로드 시 초기 호출
+  window.addEventListener('DOMContentLoaded', () => {
+    fetchPiTrackerData();
+  });
      
 </script>
      <footer class="site-footer">
