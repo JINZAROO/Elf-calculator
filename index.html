@@ -2081,12 +2081,14 @@ function copyGiftCode(code, index) {
   <div class="pi-section-title">Daily Deposited Pi Trend</div>
   <div class="chart-panel" style="margin-bottom: 2rem;">
     <div class="chart-canvas-wrap">
-      <svg class="price-svg" id="pi-daily-chart" viewBox="0 0 600 250" preserveAspectRatio="none">
-        <g id="pi-chart-grid"></g>
-        <path class="fill-path" id="pi-chart-fill" d="" />
-        <path class="line-path" id="pi-chart-line" d="" />
-        <g id="pi-chart-dots"></g>
-      </svg>
+      <svg class="price-svg" id="pi-daily-chart" viewBox="0 0 800 280" preserveAspectRatio="none">
+  <g id="pi-chart-grid"></g>
+  <path class="fill-path" id="pi-chart-fill" d="" />
+  <path class="line-path" id="pi-chart-line" d="" />
+  <g id="pi-chart-dots"></g>
+  <g id="pi-chart-y-labels"></g>
+  <g id="pi-chart-x-labels"></g>
+</svg>
     </div>
   </div>
 
@@ -3136,46 +3138,136 @@ let piLoaded = false;
 let piWalletsExpanded = false;
 let allPiWalletsData = [];
 
-  function fetchPiTrackerData() {
-    // 실제 블록탐색기 API 또는 백엔드 연동 부위
-    setTimeout(() => {
-      // 총 입금 Pi 예시 값
-      document.getElementById('pi-total-deposits').textContent = '1,245,892.4500 Pi';
+  // Pi 입금 추적 시작일 (실제 데이터가 존재하는 첫 날짜로 맞춰주세요)
+const PI_TRACKER_START_DATE = new Date('2026-05-09');
 
-      // Top 100 데이터 생성 (시뮬레이션)
-      allPiWalletsData = [];
-      for (let i = 1; i <= 100; i++) {
-        allPiWalletsData.push({
-          rank: i,
-          address: 'GBVKJKURNRBQ2M2KFOFZSDFM5D3NUMYHRTFXZXUS5AVRVYLTUWZNDCH' + (1000 + i),
-          amount: (150000 / i).toFixed(4) + ' Pi'
-        });
-      }
-
-      renderPiWalletsTable();
-      renderPiDailyChart();
-    }, 500);
+function generatePiDailyData() {
+  // 실제 블록탐색기 API 연동 시, 이 함수를 API 응답으로 교체하시면 됩니다.
+  // 지금은 시뮬레이션용 더미 데이터입니다.
+  const now = new Date();
+  const days = [];
+  let cur = new Date(PI_TRACKER_START_DATE);
+  while (cur <= now) {
+    days.push({
+      date: new Date(cur),
+      amount: Math.round(8000 + Math.random() * 35000)
+    });
+    cur.setDate(cur.getDate() + 1);
   }
+  return days;
+}
 
-  function renderPiWalletsTable() {
-    const tbody = document.getElementById('pi-top-wallets-tbody');
-    const displayLimit = piWalletsExpanded ? 100 : 10;
-    const itemsToDisplay = allPiWalletsData.slice(0, displayLimit);
+function fetchPiTrackerData() {
+  // 실제 블록탐색기 API 또는 백엔드 연동 부위
+  setTimeout(() => {
+    // 총 입금 Pi 예시 값
+    document.getElementById('pi-total-deposits').textContent = '1,245,892.4500 Pi';
 
-    tbody.innerHTML = itemsToDisplay.map(w => `
-      <tr>
-        <td style="font-weight: 700; color: #7a3e00;">#${w.rank}</td>
-        <td><span class="pi-wallet-address" title="${w.address}">${w.address}</span></td>
-        <td style="text-align: right; font-weight: 700; color: #7a3e00;">${w.amount}</td>
-      </tr>
-    `).join('');
-
-    const expandWrap = document.getElementById('pi-expand-wrap');
-    if (allPiWalletsData.length > 10) {
-      expandWrap.style.display = 'block';
-      document.getElementById('pi-expand-btn').textContent = piWalletsExpanded ? 'Collapse' : 'Expand More (Top 100)';
+    // Top 100 데이터 생성 (시뮬레이션)
+    allPiWalletsData = [];
+    for (let i = 1; i <= 100; i++) {
+      allPiWalletsData.push({
+        rank: i,
+        address: 'GBVKJKURNRBQ2M2KFOFZSDFM5D3NUMYHRTFXZXUS5AVRVYLTUWZNDCH' + (1000 + i),
+        amount: (150000 / i).toFixed(4) + ' Pi'
+      });
     }
+
+    renderPiWalletsTable();
+    renderPiDailyChart(generatePiDailyData());
+  }, 500);
+}
+
+function renderPiDailyChart(entries) {
+  const linePath = document.getElementById('pi-chart-line');
+  const fillPath = document.getElementById('pi-chart-fill');
+  const dotsG = document.getElementById('pi-chart-dots');
+  const gridG = document.getElementById('pi-chart-grid');
+  const yLabelsG = document.getElementById('pi-chart-y-labels');
+  const xLabelsG = document.getElementById('pi-chart-x-labels');
+
+  if (!entries.length) return;
+
+  const W = 800, H = 280;
+  const padL = 70, padR = 16, padT = 16, padB = 40;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  const values = entries.map(e => e.amount);
+  let minV = Math.min(...values, 0);
+  let maxV = Math.max(...values);
+  const padV = (maxV - minV) * 0.1 || 1;
+  minV = Math.max(0, minV - padV);
+  maxV += padV;
+
+  const n = entries.length;
+  const xFor = (i) => padL + (n === 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+  const yFor = (v) => padT + plotH - ((v - minV) / (maxV - minV)) * plotH;
+
+  // ── 그리드 + Y축 라벨 (수량) ──
+  const gridCount = 4;
+  let gridHtml = '';
+  let yLabelsHtml = '';
+  for (let g = 0; g <= gridCount; g++) {
+    const v = minV + ((maxV - minV) * g) / gridCount;
+    const y = yFor(v);
+    gridHtml += `<line class="grid-line" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" />`;
+    yLabelsHtml += `<text class="axis-label" x="${padL - 8}" y="${y + 3}" text-anchor="end">${Math.round(v).toLocaleString()}</text>`;
   }
+  gridG.innerHTML = gridHtml;
+  yLabelsG.innerHTML = yLabelsHtml;
+
+  // ── X축 라벨 (날짜, 너무 많으면 일부만 표시) ──
+  const xLabelStep = Math.max(1, Math.ceil(n / 8));
+  let xLabelsHtml = '';
+  entries.forEach((e, i) => {
+    if (i % xLabelStep !== 0 && i !== n - 1) return;
+    const label = `${e.date.getMonth() + 1}/${e.date.getDate()}`;
+    xLabelsHtml += `<text class="axis-label" x="${xFor(i)}" y="${H - padB + 16}" text-anchor="middle">${label}</text>`;
+  });
+  xLabelsG.innerHTML = xLabelsHtml;
+
+  // ── 선 + 채우기 ──
+  const linePoints = entries.map((e, i) => `${xFor(i)},${yFor(e.amount)}`).join(' ');
+  linePath.setAttribute('d', `M${linePoints.split(' ').join(' L')}`);
+  fillPath.setAttribute('d', `M${xFor(0)},${yFor(minV)} L${linePoints.split(' ').join(' L')} L${xFor(n - 1)},${yFor(minV)} Z`);
+
+  // ── 데이터 포인트 (호버 시 툴팁) ──
+  dotsG.innerHTML = entries.map((e, i) => {
+    const x = xFor(i), y = yFor(e.amount);
+    const label = `${e.date.getMonth() + 1}/${e.date.getDate()} · ${e.amount.toLocaleString()} Pi`;
+    return `<circle class="data-dot-hit" cx="${x}" cy="${y}" r="9" onmouseenter="showPiChartTooltip(event, '${label}')" onmouseleave="hidePiChartTooltip()"></circle>
+      <circle class="data-dot" cx="${x}" cy="${y}" r="2.5"></circle>`;
+  }).join('');
+}
+
+function showPiChartTooltip(evt, label) {
+  let tooltip = document.getElementById('pi-chart-tooltip');
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.id = 'pi-chart-tooltip';
+    tooltip.className = 'chart-tooltip';
+    evt.target.closest('.chart-canvas-wrap').appendChild(tooltip);
+  }
+  const dot = evt.target;
+  const svg = dot.closest('svg');
+  const wrap = dot.closest('.chart-canvas-wrap');
+  const svgRect = svg.getBoundingClientRect();
+  const wrapRect = wrap.getBoundingClientRect();
+  const scaleX = svgRect.width / 800;
+  const scaleY = svgRect.height / 280;
+  const cx = parseFloat(dot.getAttribute('cx')) * scaleX;
+  const cy = parseFloat(dot.getAttribute('cy')) * scaleY;
+
+  tooltip.textContent = label;
+  tooltip.style.left = (svgRect.left - wrapRect.left + cx) + 'px';
+  tooltip.style.top = (svgRect.top - wrapRect.top + cy - 8) + 'px';
+  tooltip.classList.add('show');
+}
+function hidePiChartTooltip() {
+  const tooltip = document.getElementById('pi-chart-tooltip');
+  if (tooltip) tooltip.classList.remove('show');
+}
 
   function togglePiWallets() {
     piWalletsExpanded = !piWalletsExpanded;
