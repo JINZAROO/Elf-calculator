@@ -2112,7 +2112,6 @@ function copyGiftCode(code, index) {
     <button class="pi-expand-btn" id="pi-expand-btn" onclick="togglePiWallets()">Expand More (Top 100)</button>
   </div>
 </div>
-</script>
  
 <!-- Notification 탭 -->
 <div class="page" id="page-coming2">
@@ -3133,8 +3132,9 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
   // ── Pi Tracker 데이터 로직 ──
-  let piWalletsExpanded = false;
-  let allPiWalletsData = [];
+let piLoaded = false;
+let piWalletsExpanded = false;
+let allPiWalletsData = [];
 
   function fetchPiTrackerData() {
     // 실제 블록탐색기 API 또는 백엔드 연동 부위
