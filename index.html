@@ -2108,7 +2108,6 @@ function copyGiftCode(code, index) {
       </tbody>
     </table>
   </div>
-  </div>
 
   <div class="pi-expand-btn-wrap" id="pi-expand-wrap" style="display: none;">
     <button class="pi-expand-btn" id="pi-expand-btn" onclick="togglePiWallets()">Expand More (Top 100)</button>
@@ -3268,43 +3267,6 @@ function hidePiChartTooltip() {
   const tooltip = document.getElementById('pi-chart-tooltip');
   if (tooltip) tooltip.classList.remove('show');
 }
-
-  function togglePiWallets() {
-    piWalletsExpanded = !piWalletsExpanded;
-    renderPiWalletsTable();
-  }
-
-  function renderPiDailyChart() {
-    const linePath = document.getElementById('pi-chart-line');
-    const fillPath = document.getElementById('pi-chart-fill');
-    const dotsG = document.getElementById('pi-chart-dots');
-
-    const dataPoints = [12000, 19000, 15000, 28000, 22000, 34000, 41000];
-    const maxVal = Math.max(...dataPoints) * 1.1;
-    const width = 600;
-    const height = 250;
-    const padding = 40;
-
-    let points = [];
-    dataPoints.forEach((val, idx) => {
-      const x = padding + (idx / (dataPoints.length - 1)) * (width - padding * 2);
-      const y = height - padding - (val / maxVal) * (height - padding * 2);
-      points.push({x, y, val});
-    });
-
-    let pathStr = `M ${points[0].x} ${points[0].y}`;
-    for (let i = 1; i < points.length; i++) {
-      pathStr += ` L ${points[i].x} ${points[i].y}`;
-    }
-    linePath.setAttribute('d', pathStr);
-
-    let fillStr = `${pathStr} L ${points[points.length-1].x} ${height - padding} L ${points[0].x} ${height - padding} Z`;
-    fillPath.setAttribute('d', fillStr);
-
-    dotsG.innerHTML = points.map(p => `
-      <circle class="data-dot" cx="${p.x}" cy="${p.y}" r="3.5"></circle>
-    `).join('');
-  }
 
   // 5분(300,000ms)마다 실시간 데이터 갱신 타이머 실행
   setInterval(fetchPiTrackerData, 300000);
