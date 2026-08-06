@@ -3156,25 +3156,86 @@ function generatePiDailyData() {
   return days;
 }
 
+const PI_WALLET_ADDRESS = 'GBVKJKURNRBQ2M2KFOFZSDFM5D3NUMYHRTFXZXUS5AVRVYLTUWZNDCH5';
+const PISCAN_API_BASE = 'https://apiv2.piscan.io/mainnet';
+
+// 계정 잔액 조회
+async function fetchPiAccountBalance() {
+  const res = await fetch(`${PISCAN_API_BASE}/accounts/${PI_WALLET_ADDRESS}`);
+  const data = await res.json();
+  const native = data.balances.find(b => b.asset_type === 'native');
+  return native ? parseFloat(native.balance) : null;
+}
+
+// 이 지갑으로 들어온 모든 결제(payment) 내역을 페이지네이션으로 수집
+async function fetchAllIncomingPayments(maxPages = 50) {
+  let payments = [];
+  let url = `${PISCAN_API_BASE}/accounts/${PI_WALLET_ADDRESS}/payments?limit=200&order=asc`;
+  let pageCount = 0;
+
+  while (url && pageCount < maxPages) {
+    const res = await fetch(url);
+    const data = await res.json();
+    const records = data._embedded?.records || [];
+    if (!records.length) break;
+
+    // 이 지갑으로 실제 "들어온" 네이티브 Pi 결제만 필터링
+    const incoming = records.filter(r =>
+      r.type === 'payment' &&
+      r.asset_type === 'native' &&
+      r.to === PI_WALLET_ADDRESS
+    );
+    payments = payments.concat(incoming);
+
+    const nextUrl = data._links?.next?.href || null;
+    if (nextUrl === url || records.length < 200) break; // 더 이상 페이지 없음
+    url = nextUrl;
+    pageCount++;
+  }
+  return payments;
+}
+
 function fetchPiTrackerData() {
-  // 실제 블록탐색기 API 또는 백엔드 연동 부위
-  setTimeout(() => {
-    // 총 입금 Pi 예시 값
-    document.getElementById('pi-total-deposits').textContent = '1,245,892.4500 Pi';
+  Promise.all([fetchPiAccountBalance(), fetchAllIncomingPayments()])
+    .then(([balance, payments]) => {
+      // 1) 총 입금 Pi (들어온 결제 전체 합산)
+      const totalDeposited = payments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+      document.getElementById('pi-total-deposits').textContent =
+        totalDeposited.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' Pi';
 
-    // Top 100 데이터 생성 (시뮬레이션)
-    allPiWalletsData = [];
-    for (let i = 1; i <= 100; i++) {
-      allPiWalletsData.push({
-        rank: i,
-        address: 'GBVKJKURNRBQ2M2KFOFZSDFM5D3NUMYHRTFXZXUS5AVRVYLTUWZNDCH' + (1000 + i),
-        amount: (150000 / i).toFixed(4) + ' Pi'
+      // 2) 일별 입금 추이 (날짜별 합산)
+      const dailyMap = {};
+      payments.forEach(p => {
+        const day = p.created_at.slice(0, 10); // "2026-05-09"
+        dailyMap[day] = (dailyMap[day] || 0) + parseFloat(p.amount);
       });
-    }
+      const dailyEntries = Object.keys(dailyMap).sort().map(day => ({
+        date: new Date(day),
+        amount: dailyMap[day]
+      }));
 
-    renderPiWalletsTable();
-    renderPiDailyChart(generatePiDailyData());
-  }, 500);
+      // 3) 지갑별 Top 순위 (보낸 사람별 합산)
+      const walletMap = {};
+      payments.forEach(p => {
+        walletMap[p.from] = (walletMap[p.from] || 0) + parseFloat(p.amount);
+      });
+      const rankedWallets = Object.entries(walletMap)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 100)
+        .map(([address, amount], i) => ({
+          rank: i + 1,
+          address,
+          amount: amount.toFixed(4) + ' Pi'
+        }));
+
+      allPiWalletsData = rankedWallets;
+      renderPiWalletsTable();
+      renderPiDailyChart(dailyEntries);
+    })
+    .catch(e => {
+      console.error('Pi Tracker 실데이터 로드 실패:', e);
+      document.getElementById('pi-total-deposits').textContent = 'Failed to load';
+    });
 }
 
 function renderPiDailyChart(entries) {
