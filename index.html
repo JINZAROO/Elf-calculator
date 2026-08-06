@@ -3159,42 +3159,6 @@ function generatePiDailyData() {
 const PI_WALLET_ADDRESS = 'GBVKJKURNRBQ2M2KFOFZSDFM5D3NUMYHRTFXZXUS5AVRVYLTUWZNDCH5';
 const PISCAN_API_BASE = 'https://apiv2.piscan.io/mainnet';
 
-// 계정 잔액 조회
-async function fetchPiAccountBalance() {
-  const res = await fetch(`${PISCAN_API_BASE}/accounts/${PI_WALLET_ADDRESS}`);
-  const data = await res.json();
-  const native = data.balances.find(b => b.asset_type === 'native');
-  return native ? parseFloat(native.balance) : null;
-}
-
-// 이 지갑으로 들어온 모든 결제(payment) 내역을 페이지네이션으로 수집
-async function fetchAllIncomingPayments(maxPages = 300) {
-  let payments = [];
-  let url = `${PISCAN_API_BASE}/accounts/${PI_WALLET_ADDRESS}/payments?limit=200&order=asc`;
-  let pageCount = 0;
-
-  while (url && pageCount < maxPages) {
-    const res = await fetch(url);
-    const data = await res.json();
-    const records = data._embedded?.records || [];
-    if (!records.length) break;
-
-    // 이 지갑으로 실제 "들어온" 네이티브 Pi 결제만 필터링
-    const incoming = records.filter(r =>
-      r.type === 'payment' &&
-      r.asset_type === 'native' &&
-      r.to === PI_WALLET_ADDRESS
-    );
-    payments = payments.concat(incoming);
-
-    const nextUrl = data._links?.next?.href || null;
-    if (nextUrl === url || records.length < 200) break; // 더 이상 페이지 없음
-    url = nextUrl;
-    pageCount++;
-  }
-  return payments;
-}
-
 // 최근 52주를 고정폭으로 만들어서, 거래 없는 주는 0으로 채움
 function buildWeeklyBuckets(payments, weeksCount = 52) {
   const now = new Date();
@@ -3225,41 +3189,64 @@ function buildWeeklyBuckets(payments, weeksCount = 52) {
   return buckets;
 }
 
-function fetchPiTrackerData() {
-  Promise.all([fetchPiAccountBalance(), fetchAllIncomingPayments()])
-    .then(([balance, payments]) => {
-      // 1) 총 입금 Pi (들어온 결제 전체 합산)
-      const totalDeposited = payments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
-      document.getElementById('pi-total-deposits').textContent =
-        totalDeposited.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' Pi';
+async function fetchPiTrackerData() {
+  try {
+    const res = await fetch('data/pi-tracker.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('pi-tracker.json 로드 실패 (' + res.status + ')');
+    const state = await res.json();
 
-      // 2) 일별 입금 추이 (주간 합산)
-      const weeklyEntries = buildWeeklyBuckets(payments, 52);
+    document.getElementById('pi-total-deposits').textContent =
+      state.totalDeposited.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' Pi';
 
-      // 3) 지갑별 Top 순위 (보낸 사람별 합산)
-      const walletMap = {};
-      payments.forEach(p => {
-        walletMap[p.from] = (walletMap[p.from] || 0) + parseFloat(p.amount);
-      });
-      const rankedWallets = Object.entries(walletMap)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 100)
-        .map(([address, amount], i) => ({
-          rank: i + 1,
-          address,
-          amount: amount.toFixed(4) + ' Pi'
-        }));
+    const weeklyEntries = buildWeeklyBucketsFromDaily(state.dailyTotals, 52);
 
-      allPiWalletsData = rankedWallets;
-      renderPiWalletsTable();
-      renderPiDailyChart(weeklyEntries);
-    })
-    .catch(e => {
-      console.error('Pi Tracker 실데이터 로드 실패:', e);
-      document.getElementById('pi-total-deposits').textContent = 'Failed to load';
-    });
+    const rankedWallets = Object.entries(state.walletTotals)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 100)
+      .map(([address, amount], i) => ({
+        rank: i + 1,
+        address,
+        amount: amount.toFixed(4) + ' Pi'
+      }));
+
+    allPiWalletsData = rankedWallets;
+    renderPiWalletsTable();
+    renderPiDailyChart(weeklyEntries);
+  } catch (e) {
+    console.error('Pi Tracker 데이터 로드 실패:', e);
+    document.getElementById('pi-total-deposits').textContent = 'Failed to load';
+  }
 }
 
+function buildWeeklyBucketsFromDaily(dailyTotals, weeksCount = 52) {
+  const now = new Date();
+  const startOfThisWeek = new Date(now);
+  startOfThisWeek.setHours(0, 0, 0, 0);
+  startOfThisWeek.setDate(startOfThisWeek.getDate() - startOfThisWeek.getDay());
+
+  const firstWeekStart = new Date(startOfThisWeek);
+  firstWeekStart.setDate(firstWeekStart.getDate() - (weeksCount - 1) * 7);
+
+  const buckets = [];
+  for (let i = 0; i < weeksCount; i++) {
+    const weekStart = new Date(firstWeekStart);
+    weekStart.setDate(weekStart.getDate() + i * 7);
+    buckets.push({ date: weekStart, amount: 0 });
+  }
+
+  Object.entries(dailyTotals).forEach(([dayStr, amount]) => {
+    const day = new Date(dayStr);
+    if (day < firstWeekStart) return;
+    const diffDays = Math.floor((day - firstWeekStart) / (1000 * 60 * 60 * 24));
+    const weekIndex = Math.floor(diffDays / 7);
+    if (weekIndex >= 0 && weekIndex < weeksCount) {
+      buckets[weekIndex].amount += amount;
+    }
+  });
+
+  return buckets;
+}
+     
 function renderPiDailyChart(entries) {
   const linePath = document.getElementById('pi-chart-line');
   const fillPath = document.getElementById('pi-chart-fill');
