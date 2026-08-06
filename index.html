@@ -2114,6 +2114,7 @@ function copyGiftCode(code, index) {
           <th style="width: 60px;">Rank</th>
           <th>Wallet Address</th>
           <th style="text-align: right;">Deposited Pi</th>
+          <th style="text-align: right;">Value (USD)</th>
         </tr>
       </thead>
       <tbody id="pi-top-wallets-tbody">
@@ -3217,13 +3218,14 @@ async function fetchPiTrackerData() {
     const weeklyEntries = buildWeeklyBucketsFromDaily(state.dailyTotals, 52);
 
     const rankedWallets = Object.entries(state.walletTotals)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 100)
-      .map(([address, amount], i) => ({
-        rank: i + 1,
-        address,
-        amount: Math.round(amount).toLocaleString() + ' Pi'
-      }));
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 100)
+  .map(([address, amount], i) => ({
+    rank: i + 1,
+    address,
+    amountRaw: amount,
+    amount: Math.round(amount).toLocaleString() + ' Pi'
+  }));
 
     allPiWalletsData = rankedWallets;
     renderPiWalletsTable();
@@ -3370,19 +3372,23 @@ function hidePiChartTooltip() {
   if (tooltip) tooltip.classList.remove('show');
 }
 
-/* 여기에 추가 */
 function renderPiWalletsTable() {
   const tbody = document.getElementById('pi-top-wallets-tbody');
   const displayLimit = piWalletsExpanded ? 100 : 10;
   const itemsToDisplay = allPiWalletsData.slice(0, displayLimit);
 
-  tbody.innerHTML = itemsToDisplay.map(w => `
+  tbody.innerHTML = itemsToDisplay.map(w => {
+    const usdText = piPriceUSD != null
+      ? '$' + Math.round(w.amountRaw * piPriceUSD).toLocaleString()
+      : '···';
+    return `
     <tr>
       <td style="font-weight: 700; color: #7a3e00;">#${w.rank}</td>
       <td><span class="pi-wallet-address" title="${w.address}">${w.address}</span></td>
       <td style="text-align: right; font-weight: 700; color: #7a3e00;">${w.amount}</td>
-    </tr>
-  `).join('');
+      <td style="text-align: right; font-weight: 700; color: #a07040;">${usdText}</td>
+    </tr>`;
+  }).join('');
 
   const expandWrap = document.getElementById('pi-expand-wrap');
   if (allPiWalletsData.length > 10) {
