@@ -1049,6 +1049,13 @@
   .pi-summary-title { font-size: 12px; color: #a07040; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
   .pi-summary-value { font-size: 28px; font-weight: 700; color: #7a3e00; font-family: 'Inter', sans-serif; }
 
+  .pi-summary-usd {
+  font-size: 15px;
+  color: #a07040;
+  font-family: 'Inter', sans-serif;
+  margin-top: 4px;
+}
+
   .pi-section-title { font-size: 15px; font-weight: 700; color: #f0c060; margin-bottom: 10px; font-family: 'Inter', sans-serif; }
 
   .pi-table-wrap {
@@ -1893,7 +1900,12 @@ fetchForexRates();
 
 // 5분마다 Pi 코인 시세 + 환율 자동 갱신
 setInterval(() => {
-  fetchPiPrice();
+  fetchPiPrice().then(() => {
+    // Pi Tracker 탭이 이미 데이터를 갖고 있다면 달러 값도 같이 갱신
+    if (typeof piTrackerLastTotal !== 'undefined' && piTrackerLastTotal != null) {
+      updatePiTotalUsdValue(piTrackerLastTotal);
+    }
+  });
   fetchForexRates();
 }, 5 * 60 * 1000);
 
@@ -2075,6 +2087,7 @@ function copyGiftCode(code, index) {
   <div class="pi-summary-card">
     <div class="pi-summary-title">Total Deposited Pi</div>
     <div class="pi-summary-value" id="pi-total-deposits">Loading...</div>
+    <div class="pi-summary-usd" id="pi-total-deposits-usd">···</div>
   </div>
 
   <!-- 일별 입금 Pi 선형차트 -->
@@ -3134,6 +3147,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
   // ── Pi Tracker 데이터 로직 ──
 let piLoaded = false;
+let piTrackerLastTotal = null;
 let piWalletsExpanded = false;
 let allPiWalletsData = [];
 
@@ -3197,6 +3211,8 @@ async function fetchPiTrackerData() {
 
     document.getElementById('pi-total-deposits').textContent =
       state.totalDeposited.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' Pi';
+    piTrackerLastTotal = state.totalDeposited;  
+    updatePiTotalUsdValue(state.totalDeposited);
 
     const weeklyEntries = buildWeeklyBucketsFromDaily(state.dailyTotals, 52);
 
@@ -3216,6 +3232,17 @@ async function fetchPiTrackerData() {
     console.error('Pi Tracker 데이터 로드 실패:', e);
     document.getElementById('pi-total-deposits').textContent = 'Failed to load';
   }
+}
+
+function updatePiTotalUsdValue(totalPi) {
+  const el = document.getElementById('pi-total-deposits-usd');
+  if (!el) return;
+  if (piPriceUSD == null) {
+    el.textContent = 'USD value loading...';
+    return;
+  }
+  const usdValue = totalPi * piPriceUSD;
+  el.textContent = '≈ $' + usdValue.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' USD';
 }
 
 function buildWeeklyBucketsFromDaily(dailyTotals, weeksCount = 52) {
