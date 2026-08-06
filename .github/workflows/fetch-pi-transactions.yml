@@ -2,7 +2,7 @@ name: Fetch Pi Tracker Transactions
 on:
   schedule:
     # 매시 23분에 실행 (마켓 시세 스크립트와 시간 겹치지 않게 분산)
-    - cron: '23 * * * *'
+    - cron: '40 * * * *'
   workflow_dispatch: {}  # Actions 탭에서 수동 실행 가능
 permissions:
   contents: write
