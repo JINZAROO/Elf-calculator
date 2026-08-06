@@ -2078,7 +2078,7 @@ function copyGiftCode(code, index) {
   </div>
 
   <!-- 일별 입금 Pi 선형차트 -->
-  <div class="pi-section-title">Daily Deposited Pi Trend</div>
+  <div class="pi-section-title">Weekly Deposited Pi Trend (Last 52 Weeks</div>
   <div class="chart-panel" style="margin-bottom: 2rem;">
     <div class="chart-canvas-wrap">
       <svg class="price-svg" id="pi-daily-chart" viewBox="0 0 800 280" preserveAspectRatio="none">
@@ -3168,7 +3168,7 @@ async function fetchPiAccountBalance() {
 }
 
 // 이 지갑으로 들어온 모든 결제(payment) 내역을 페이지네이션으로 수집
-async function fetchAllIncomingPayments(maxPages = 50) {
+async function fetchAllIncomingPayments(maxPages = 300) {
   let payments = [];
   let url = `${PISCAN_API_BASE}/accounts/${PI_WALLET_ADDRESS}/payments?limit=200&order=asc`;
   let pageCount = 0;
@@ -3195,6 +3195,36 @@ async function fetchAllIncomingPayments(maxPages = 50) {
   return payments;
 }
 
+// 최근 52주를 고정폭으로 만들어서, 거래 없는 주는 0으로 채움
+function buildWeeklyBuckets(payments, weeksCount = 52) {
+  const now = new Date();
+  const startOfThisWeek = new Date(now);
+  startOfThisWeek.setHours(0, 0, 0, 0);
+  startOfThisWeek.setDate(startOfThisWeek.getDate() - startOfThisWeek.getDay()); // 이번 주 일요일
+
+  const firstWeekStart = new Date(startOfThisWeek);
+  firstWeekStart.setDate(firstWeekStart.getDate() - (weeksCount - 1) * 7);
+
+  const buckets = [];
+  for (let i = 0; i < weeksCount; i++) {
+    const weekStart = new Date(firstWeekStart);
+    weekStart.setDate(weekStart.getDate() + i * 7);
+    buckets.push({ date: weekStart, amount: 0 });
+  }
+
+  payments.forEach(p => {
+    const paidAt = new Date(p.created_at);
+    if (paidAt < firstWeekStart) return; // 52주보다 오래된 데이터는 제외
+    const diffDays = Math.floor((paidAt - firstWeekStart) / (1000 * 60 * 60 * 24));
+    const weekIndex = Math.floor(diffDays / 7);
+    if (weekIndex >= 0 && weekIndex < weeksCount) {
+      buckets[weekIndex].amount += parseFloat(p.amount);
+    }
+  });
+
+  return buckets;
+}
+
 function fetchPiTrackerData() {
   Promise.all([fetchPiAccountBalance(), fetchAllIncomingPayments()])
     .then(([balance, payments]) => {
@@ -3203,16 +3233,8 @@ function fetchPiTrackerData() {
       document.getElementById('pi-total-deposits').textContent =
         totalDeposited.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' Pi';
 
-      // 2) 일별 입금 추이 (날짜별 합산)
-      const dailyMap = {};
-      payments.forEach(p => {
-        const day = p.created_at.slice(0, 10); // "2026-05-09"
-        dailyMap[day] = (dailyMap[day] || 0) + parseFloat(p.amount);
-      });
-      const dailyEntries = Object.keys(dailyMap).sort().map(day => ({
-        date: new Date(day),
-        amount: dailyMap[day]
-      }));
+      // 2) 일별 입금 추이 (주간 합산)
+      const weeklyEntries = buildWeeklyBuckets(payments, 52);
 
       // 3) 지갑별 Top 순위 (보낸 사람별 합산)
       const walletMap = {};
@@ -3230,7 +3252,7 @@ function fetchPiTrackerData() {
 
       allPiWalletsData = rankedWallets;
       renderPiWalletsTable();
-      renderPiDailyChart(dailyEntries);
+      renderPiDailyChart(weeklyEntries);
     })
     .catch(e => {
       console.error('Pi Tracker 실데이터 로드 실패:', e);
