@@ -3196,7 +3196,7 @@ async function fetchPiTrackerData() {
     const state = await res.json();
 
     document.getElementById('pi-total-deposits').textContent =
-      state.totalDeposited.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' Pi';
+      state.totalDeposited.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' Pi';
 
     const weeklyEntries = buildWeeklyBucketsFromDaily(state.dailyTotals, 52);
 
@@ -3206,7 +3206,7 @@ async function fetchPiTrackerData() {
       .map(([address, amount], i) => ({
         rank: i + 1,
         address,
-        amount: amount.toFixed(4) + ' Pi'
+        amount: Math.round(amount).toLocaleString() + ' Pi'
       }));
 
     allPiWalletsData = rankedWallets;
@@ -3304,7 +3304,7 @@ function renderPiDailyChart(entries) {
   // ── 데이터 포인트 (호버 시 툴팁) ──
   dotsG.innerHTML = entries.map((e, i) => {
     const x = xFor(i), y = yFor(e.amount);
-    const label = `${e.date.getMonth() + 1}/${e.date.getDate()} · ${e.amount.toLocaleString()} Pi`;
+    const label = `${e.date.getMonth() + 1}/${e.date.getDate()} · ${Math.round(e.amount).toLocaleString()} Pi`;
     return `<circle class="data-dot-hit" cx="${x}" cy="${y}" r="9" onmouseenter="showPiChartTooltip(event, '${label}')" onmouseleave="hidePiChartTooltip()"></circle>
       <circle class="data-dot" cx="${x}" cy="${y}" r="2.5"></circle>`;
   }).join('');
