@@ -2105,6 +2105,21 @@ function copyGiftCode(code, index) {
     </div>
   </div>
 
+<!-- 일별 입금 Pi 선형차트 (최근 30일) -->
+<div class="pi-section-title">Daily Deposited Pi Trend (Last 30 Days)</div>
+<div class="chart-panel" style="margin-bottom: 2rem;">
+  <div class="chart-canvas-wrap">
+    <svg class="price-svg" id="pi-daily30-chart" viewBox="0 0 800 280" preserveAspectRatio="none">
+      <g id="pi-chart30-grid"></g>
+      <path class="fill-path" id="pi-chart30-fill" d="" />
+      <path class="line-path" id="pi-chart30-line" d="" />
+      <g id="pi-chart30-dots"></g>
+      <g id="pi-chart30-y-labels"></g>
+      <g id="pi-chart30-x-labels"></g>
+    </svg>
+  </div>
+</div>
+
   <!-- Top 100 지갑주소와 Pi수량 -->
   <div class="pi-section-title">Top Depositor Wallets</div>
   <div class="pi-table-wrap">
@@ -3216,6 +3231,7 @@ async function fetchPiTrackerData() {
     updatePiTotalUsdValue(state.totalDeposited);
 
     const weeklyEntries = buildWeeklyBucketsFromDaily(state.dailyTotals, 52);
+    const daily30Entries = buildDailyBuckets(state.dailyTotals, 30);
 
     const rankedWallets = Object.entries(state.walletTotals)
   .sort((a, b) => b[1] - a[1])
@@ -3230,6 +3246,7 @@ async function fetchPiTrackerData() {
     allPiWalletsData = rankedWallets;
     renderPiWalletsTable();
     renderPiDailyChart(weeklyEntries);
+    renderPiDaily30Chart(daily30Entries);
   } catch (e) {
     console.error('Pi Tracker 데이터 로드 실패:', e);
     document.getElementById('pi-total-deposits').textContent = 'Failed to load';
@@ -3275,14 +3292,31 @@ function buildWeeklyBucketsFromDaily(dailyTotals, weeksCount = 52) {
 
   return buckets;
 }
+
+function buildDailyBuckets(dailyTotals, daysCount = 30) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const firstDay = new Date(today);
+  firstDay.setDate(firstDay.getDate() - (daysCount - 1));
+
+  const buckets = [];
+  for (let i = 0; i < daysCount; i++) {
+    const day = new Date(firstDay);
+    day.setDate(day.getDate() + i);
+    const key = day.toISOString().slice(0, 10);
+    buckets.push({ date: day, amount: dailyTotals[key] || 0 });
+  }
+  return buckets;
+}
      
-function renderPiDailyChart(entries) {
-  const linePath = document.getElementById('pi-chart-line');
-  const fillPath = document.getElementById('pi-chart-fill');
-  const dotsG = document.getElementById('pi-chart-dots');
-  const gridG = document.getElementById('pi-chart-grid');
-  const yLabelsG = document.getElementById('pi-chart-y-labels');
-  const xLabelsG = document.getElementById('pi-chart-x-labels');
+function renderPiChartToElements(entries, ids, tooltipId) {
+  const linePath = document.getElementById(ids.line);
+  const fillPath = document.getElementById(ids.fill);
+  const dotsG = document.getElementById(ids.dots);
+  const gridG = document.getElementById(ids.grid);
+  const yLabelsG = document.getElementById(ids.yLabels);
+  const xLabelsG = document.getElementById(ids.xLabels);
 
   if (!entries.length) return;
 
@@ -3302,7 +3336,6 @@ function renderPiDailyChart(entries) {
   const xFor = (i) => padL + (n === 1 ? plotW / 2 : (i / (n - 1)) * plotW);
   const yFor = (v) => padT + plotH - ((v - minV) / (maxV - minV)) * plotH;
 
-  // ── 그리드 + Y축 라벨 (수량) ──
   const gridCount = 4;
   let gridHtml = '';
   let yLabelsHtml = '';
@@ -3315,7 +3348,6 @@ function renderPiDailyChart(entries) {
   gridG.innerHTML = gridHtml;
   yLabelsG.innerHTML = yLabelsHtml;
 
-  // ── X축 라벨 (날짜, 너무 많으면 일부만 표시) ──
   const xLabelStep = Math.max(1, Math.ceil(n / 8));
   let xLabelsHtml = '';
   entries.forEach((e, i) => {
@@ -3325,25 +3357,38 @@ function renderPiDailyChart(entries) {
   });
   xLabelsG.innerHTML = xLabelsHtml;
 
-  // ── 선 + 채우기 ──
   const linePoints = entries.map((e, i) => `${xFor(i)},${yFor(e.amount)}`).join(' ');
   linePath.setAttribute('d', `M${linePoints.split(' ').join(' L')}`);
   fillPath.setAttribute('d', `M${xFor(0)},${yFor(minV)} L${linePoints.split(' ').join(' L')} L${xFor(n - 1)},${yFor(minV)} Z`);
 
-  // ── 데이터 포인트 (호버 시 툴팁) ──
   dotsG.innerHTML = entries.map((e, i) => {
     const x = xFor(i), y = yFor(e.amount);
     const label = `${e.date.getMonth() + 1}/${e.date.getDate()} · ${Math.round(e.amount).toLocaleString()} Pi`;
-    return `<circle class="data-dot-hit" cx="${x}" cy="${y}" r="9" onmouseenter="showPiChartTooltip(event, '${label}')" onmouseleave="hidePiChartTooltip()"></circle>
+    return `<circle class="data-dot-hit" cx="${x}" cy="${y}" r="9" onmouseenter="showPiChartTooltip(event, '${label}', '${tooltipId}')" onmouseleave="hidePiChartTooltip('${tooltipId}')"></circle>
       <circle class="data-dot" cx="${x}" cy="${y}" r="2.5"></circle>`;
   }).join('');
 }
 
-function showPiChartTooltip(evt, label) {
-  let tooltip = document.getElementById('pi-chart-tooltip');
+function renderPiDailyChart(entries) {
+  renderPiChartToElements(entries, {
+    line: 'pi-chart-line', fill: 'pi-chart-fill', dots: 'pi-chart-dots',
+    grid: 'pi-chart-grid', yLabels: 'pi-chart-y-labels', xLabels: 'pi-chart-x-labels'
+  }, 'pi-chart-tooltip');
+}
+
+function renderPiDaily30Chart(entries) {
+  renderPiChartToElements(entries, {
+    line: 'pi-chart30-line', fill: 'pi-chart30-fill', dots: 'pi-chart30-dots',
+    grid: 'pi-chart30-grid', yLabels: 'pi-chart30-y-labels', xLabels: 'pi-chart30-x-labels'
+  }, 'pi-chart30-tooltip');
+}
+
+function showPiChartTooltip(evt, label, tooltipId) {
+  tooltipId = tooltipId || 'pi-chart-tooltip';
+  let tooltip = document.getElementById(tooltipId);
   if (!tooltip) {
     tooltip = document.createElement('div');
-    tooltip.id = 'pi-chart-tooltip';
+    tooltip.id = tooltipId;
     tooltip.className = 'chart-tooltip';
     evt.target.closest('.chart-canvas-wrap').appendChild(tooltip);
   }
@@ -3362,13 +3407,9 @@ function showPiChartTooltip(evt, label) {
   tooltip.style.top = (svgRect.top - wrapRect.top + cy - 8) + 'px';
   tooltip.classList.add('show');
 }
-function hidePiChartTooltip() {
-  const tooltip = document.getElementById('pi-chart-tooltip');
-  if (tooltip) tooltip.classList.remove('show');
-}
-
-     function hidePiChartTooltip() {
-  const tooltip = document.getElementById('pi-chart-tooltip');
+function hidePiChartTooltip(tooltipId) {
+  tooltipId = tooltipId || 'pi-chart-tooltip';
+  const tooltip = document.getElementById(tooltipId);
   if (tooltip) tooltip.classList.remove('show');
 }
 
